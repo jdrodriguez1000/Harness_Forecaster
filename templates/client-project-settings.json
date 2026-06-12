@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "defaultMode": "bypassPermissions",
+    "allow": [
+      "Write(*)",
+      "Read(*)",
+      "Bash(git *)",
+      "Bash(mkdir *)",
+      "Bash(New-Item *)",
+      "Bash(Get-Content *)",
+      "Bash(Set-Content *)",
+      "Bash(Add-Content *)",
+      "Bash(Out-File *)",
+      "Bash(Test-Path *)",
+      "Bash(Get-ChildItem *)",
+      "Bash(Copy-Item *)",
+      "Bash(Move-Item *)",
+      "Bash(Remove-Item *)",
+      "Bash(Get-Date *)",
+      "Bash(python *)",
+      "Bash(py *)",
+      "Bash(powershell.exe *)",
+      "Bash(pwsh *)",
+      "Bash(claude --dangerously-skip-permissions -p *)",
+      "PowerShell(New-Item *)",
+      "PowerShell(Get-Content *)",
+      "PowerShell(Set-Content *)",
+      "PowerShell(Add-Content *)",
+      "PowerShell(Out-File *)",
+      "PowerShell(Test-Path *)",
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell(Copy-Item *)",
+      "PowerShell(Move-Item *)",
+      "PowerShell(Remove-Item *)",
+      "PowerShell(Get-Date *)",
+      "PowerShell(git *)",
+      "PowerShell(python *)",
+      "PowerShell(py *)",
+      "PowerShell($env:HARNESS_DEPLOY_SCRIPT)"
+    ]
+  }
+}

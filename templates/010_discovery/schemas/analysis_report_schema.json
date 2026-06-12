@@ -1,0 +1,211 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "analysis_report_schema",
+  "title": "analysis_report",
+  "description": "Schema del artefacto 010_discovery/analysis_report.json — escrito por discovery-analyst, leído por discovery-configurator y discovery-evaluator.",
+  "type": "object",
+  "required": [
+    "tenant_id",
+    "timestamp_analisis",
+    "session_data_path",
+    "ito",
+    "categoria",
+    "cold_start",
+    "escalamiento",
+    "warnings"
+  ],
+  "properties": {
+    "tenant_id": {
+      "type": "string",
+      "description": "Identificador único del tenant — slug kebab-case de la razón social."
+    },
+    "timestamp_analisis": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp ISO 8601 de cuándo se generó el reporte."
+    },
+    "session_data_path": {
+      "type": "string",
+      "description": "Ruta relativa al session_data.json de origen (siempre '010_discovery/session_data.json')."
+    },
+    "ito": {
+      "type": "object",
+      "required": [
+        "provisional",
+        "valores_base",
+        "normalizados",
+        "pesos",
+        "referencias_max",
+        "ito_calculado"
+      ],
+      "properties": {
+        "provisional": {
+          "type": "boolean",
+          "const": true,
+          "description": "Siempre true hasta que T-030 calibre los valores definitivos."
+        },
+        "valores_base": {
+          "type": "object",
+          "required": ["skus_activos", "clientes_xyz", "pedidos_por_mes"],
+          "properties": {
+            "skus_activos": { "type": ["integer", "null"], "minimum": 1 },
+            "clientes_xyz": { "type": ["integer", "null"], "minimum": 1 },
+            "pedidos_por_mes": { "type": ["integer", "null"], "minimum": 1 }
+          }
+        },
+        "normalizados": {
+          "type": "object",
+          "required": ["norm_skus", "norm_clientes", "norm_pedidos"],
+          "properties": {
+            "norm_skus": {
+              "type": ["number", "null"],
+              "minimum": 0, "maximum": 100,
+              "description": "min(skus / 500, 1.0) × 100 — 2 decimales."
+            },
+            "norm_clientes": {
+              "type": ["number", "null"],
+              "minimum": 0, "maximum": 100,
+              "description": "min(clientes / 100, 1.0) × 100 — 2 decimales."
+            },
+            "norm_pedidos": {
+              "type": ["number", "null"],
+              "minimum": 0, "maximum": 100,
+              "description": "min(pedidos / 2000, 1.0) × 100 — 2 decimales."
+            }
+          }
+        },
+        "pesos": {
+          "type": "object",
+          "required": ["w1_skus", "w2_clientes", "w3_pedidos"],
+          "properties": {
+            "w1_skus": { "type": "number", "const": 0.40 },
+            "w2_clientes": { "type": "number", "const": 0.35 },
+            "w3_pedidos": { "type": "number", "const": 0.25 }
+          }
+        },
+        "referencias_max": {
+          "type": "object",
+          "required": ["skus_max", "clientes_max", "pedidos_max"],
+          "properties": {
+            "skus_max": { "type": "integer", "const": 500 },
+            "clientes_max": { "type": "integer", "const": 100 },
+            "pedidos_max": { "type": "integer", "const": 2000 }
+          }
+        },
+        "ito_calculado": {
+          "type": ["number", "null"],
+          "minimum": 0, "maximum": 100,
+          "description": "w1×norm_skus + w2×norm_clientes + w3×norm_pedidos — exactamente 2 decimales."
+        }
+      }
+    },
+    "categoria": {
+      "type": "object",
+      "required": [
+        "calculada",
+        "comercial",
+        "confirmada",
+        "discrepancia",
+        "discrepancia_critica",
+        "nota_discrepancia"
+      ],
+      "properties": {
+        "calculada": {
+          "type": "string",
+          "enum": ["M", "L", "XL"],
+          "description": "Resultado del ITO: ≤ 33 → M, 33 < ITO ≤ 66 → L, > 66 → XL."
+        },
+        "comercial": {
+          "type": "string",
+          "enum": ["M", "L", "XL"],
+          "description": "Categoría asignada durante el proceso comercial."
+        },
+        "confirmada": {
+          "type": "string",
+          "enum": ["M", "L", "XL"],
+          "description": "Categoría que usará el sistema. Igual a 'calculada' salvo discrepancia crítica bloqueada."
+        },
+        "discrepancia": {
+          "type": "string",
+          "enum": ["ninguna", "advertencia", "critica"],
+          "description": "ninguna = sin diferencia; advertencia = 1 nivel; critica = M↔XL (2 niveles)."
+        },
+        "discrepancia_critica": {
+          "type": "boolean",
+          "description": "true si calculada y comercial difieren en 2 niveles (M↔XL)."
+        },
+        "nota_discrepancia": {
+          "type": ["string", "null"],
+          "description": "Explicación y acción recomendada. null si discrepancia == 'ninguna'."
+        }
+      }
+    },
+    "cold_start": {
+      "type": "object",
+      "required": [
+        "anios_historial",
+        "nivel",
+        "codigo",
+        "inviable",
+        "cascada_paso",
+        "cascada_descripcion"
+      ],
+      "properties": {
+        "anios_historial": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "description": "Valor directo de session_data.json."
+        },
+        "nivel": {
+          "type": "string",
+          "enum": ["Alta", "Estándar", "Reducida", "Experimental"],
+          "description": "≥3 años → Alta | 2–3 → Estándar | 1–2 → Reducida | <1 → Experimental."
+        },
+        "codigo": {
+          "type": "string",
+          "enum": ["CS-ALTA", "CS-ESTANDAR", "CS-REDUCIDA", "CS-EXPERIMENTAL"]
+        },
+        "inviable": {
+          "type": "boolean",
+          "description": "true si anios_historial < 0.25 (menos de 3 meses). Requiere escalamiento."
+        },
+        "cascada_paso": {
+          "type": ["integer", "null"],
+          "enum": [1, 2, 3, null],
+          "description": "Solo para CS-EXPERIMENTAL. En Fase 1 siempre es 3. null en otros niveles."
+        },
+        "cascada_descripcion": {
+          "type": ["string", "null"],
+          "description": "Descripción del paso activo de la cascada. null si no es CS-EXPERIMENTAL."
+        }
+      }
+    },
+    "escalamiento": {
+      "type": "object",
+      "required": ["requerido", "razones"],
+      "properties": {
+        "requerido": {
+          "type": "boolean",
+          "description": "true si hay discrepancia crítica o cold start inviable."
+        },
+        "razones": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Una entrada por cada razón de escalamiento al operador."
+        }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Advertencias no bloqueantes. Siempre incluye aviso de ITO provisional mientras T-030 no esté cerrada."
+    }
+  },
+  "_notas": {
+    "escritor": "discovery-analyst",
+    "lectores": ["discovery-configurator", "discovery-evaluator"],
+    "regla_confirmada": "Sin discrepancia o advertencia → confirmada = calculada. Discrepancia crítica → confirmada = comercial (bloqueado hasta resolución del operador).",
+    "cascada_fase1": "En Fase 1, siempre cascada_paso: 3 para CS-EXPERIMENTAL.",
+    "ito_provisional": "provisional: true es obligatorio hasta que T-030 calibre pesos y umbrales definitivos."
+  }
+}

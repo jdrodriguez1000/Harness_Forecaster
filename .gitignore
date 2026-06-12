@@ -1,0 +1,37 @@
+# === FARO / Harness Forecaster — .gitignore ===
+
+# Configuración local de Claude Code (permisos específicos de la máquina, rutas absolutas)
+.claude/settings.local.json
+
+# Estado de runtime de proyectos cliente (no debe existir en el repo fuente, pero por si acaso)
+600_persistence/
+605_eval/
+610_knowledge/decisions_library.md
+610_knowledge/lessons_learned.md
+1000_storage_local/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# Editores / IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# Logs y temporales
+*.log
+*.tmp
+*.bak

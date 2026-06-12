@@ -1,0 +1,174 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "session_data_schema",
+  "title": "session_data",
+  "description": "Schema del artefacto 010_discovery/session_data.json — derivado por discovery-synthesizer desde session_notes.json y synthesis_report.json, leído por discovery-analyst.",
+  "type": "object",
+  "required": [
+    "razon_social",
+    "sector",
+    "contacto_principal",
+    "responsable_pagos",
+    "skus_activos",
+    "clientes_xyz",
+    "pedidos_por_mes",
+    "anios_historial",
+    "modo_ingesta",
+    "horizonte_pronostico",
+    "jerarquia_producto",
+    "jerarquia_geografica",
+    "tiene_esquema2",
+    "plan_suscripcion",
+    "criterios_exito",
+    "campos_missing",
+    "inconsistencias_detectadas",
+    "timestamp_sesion"
+  ],
+  "properties": {
+    "razon_social": {
+      "type": "string",
+      "description": "Nombre legal de la empresa ABC cliente."
+    },
+    "sector": {
+      "type": "string",
+      "description": "Industria del cliente (alimentos, químicos, textil, etc.)."
+    },
+    "contacto_principal": {
+      "type": "object",
+      "required": ["nombre", "correo", "telefono"],
+      "properties": {
+        "nombre": { "type": "string" },
+        "correo": { "type": "string", "format": "email" },
+        "telefono": { "type": "string" }
+      }
+    },
+    "responsable_pagos": {
+      "type": "object",
+      "required": ["nombre", "correo"],
+      "properties": {
+        "nombre": { "type": "string" },
+        "correo": { "type": "string", "format": "email" }
+      }
+    },
+    "skus_activos": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "description": "Cantidad aproximada de SKUs activos. Campo ITO — bloqueante si MISSING."
+    },
+    "clientes_xyz": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "description": "Cantidad aproximada de clientes XYZ atendidos. Campo ITO — bloqueante si MISSING."
+    },
+    "pedidos_por_mes": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "description": "Volumen aproximado de pedidos por mes. Campo ITO — bloqueante si MISSING."
+    },
+    "anios_historial": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "description": "Años de historial de pedidos disponible. Bloqueante si MISSING."
+    },
+    "modo_ingesta": {
+      "type": "string",
+      "enum": ["Batch", "Incremental", "MISSING"],
+      "description": "Modo de entrega de datos. Bloqueante si MISSING."
+    },
+    "frecuencia_incremental": {
+      "type": ["string", "null"],
+      "enum": ["Diaria", "Semanal", null],
+      "description": "Obligatorio si modo_ingesta == Incremental. Null si modo Batch."
+    },
+    "horizonte_pronostico": {
+      "type": "string",
+      "enum": ["días", "semanas", "meses", "múltiples meses", "MISSING"],
+      "description": "Granularidad temporal del pronóstico requerido."
+    },
+    "jerarquia_producto": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Niveles de jerarquía de producto disponibles (ej: [\"Categoría\", \"SKU\"])."
+    },
+    "jerarquia_geografica": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Niveles de jerarquía geográfica disponibles (ej: [\"País\", \"Sede\"])."
+    },
+    "tiene_esquema2": {
+      "type": ["boolean", "null"],
+      "description": "true si el cliente tiene datos de producción e inventario (Esquema 2)."
+    },
+    "minimos_contractuales": {
+      "type": ["string", "null"],
+      "description": "Descripción de mínimos contractuales con clientes XYZ si existen."
+    },
+    "plan_suscripcion": {
+      "type": "string",
+      "enum": ["Mensual", "Trimestral", "Anual", "MISSING"],
+      "description": "Plan de suscripción elegido por el cliente."
+    },
+    "criterios_exito": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["reducir sobre-inventario", "reducir quiebres"]
+      },
+      "minItems": 1,
+      "description": "Al menos un criterio de éxito definido con el cliente."
+    },
+    "campos_missing": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["campo", "razon", "bloqueante"],
+        "properties": {
+          "campo": { "type": "string" },
+          "razon": { "type": "string" },
+          "bloqueante": { "type": "boolean" }
+        }
+      },
+      "description": "Lista de campos que quedaron como MISSING tras la síntesis. Puede originarse en: ningún stakeholder lo mencionó, o contradicción sin resolver que impide consolidar el valor."
+    },
+    "inconsistencias_detectadas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["codigo", "descripcion", "campos_afectados", "bloqueante"],
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "enum": ["C-01", "C-02", "C-03", "C-04", "C-05", "C-06"]
+          },
+          "descripcion": { "type": "string" },
+          "campos_afectados": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "bloqueante": { "type": "boolean" }
+        }
+      },
+      "description": "Inconsistencias detectadas durante la síntesis multi-stakeholder."
+    },
+    "timestamp_sesion": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp ISO 8601 de cuándo el synthesizer derivó este archivo."
+    }
+  },
+  "_notas": {
+    "escritor": "discovery-synthesizer",
+    "fuentes": ["010_discovery/session_notes.json", "010_discovery/synthesis_report.json"],
+    "lectores": ["discovery-analyst"],
+    "nota_arquitectura": "Este archivo ya no es llenado directamente por el interviewer. El interviewer produce session_notes.json (notas brutas por stakeholder). El synthesizer consolida esas notas en synthesis_report.json y deriva este session_data.json para que el analyst lo consuma sin cambios en su interfaz.",
+    "campos_ito_bloqueantes": ["skus_activos", "clientes_xyz", "pedidos_por_mes", "anios_historial", "modo_ingesta"],
+    "reglas_consistencia": {
+      "C-01": "modo_ingesta == Incremental y frecuencia_incremental es null",
+      "C-02": "anios_historial < 0.25 (menos de 3 meses — cold start inviable)",
+      "C-03": "skus_activos, clientes_xyz o pedidos_por_mes MISSING o <= 0 (ITO bloqueado)",
+      "C-04": "criterios_exito es array vacío",
+      "C-05": "jerarquia_producto es array vacío",
+      "C-06": "Contradicción entre stakeholders sin resolver que dejó un campo bloqueante como MISSING — ver synthesis_report.json para detalle"
+    }
+  }
+}
