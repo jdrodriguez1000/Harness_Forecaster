@@ -10,7 +10,8 @@ Estados posibles: `no iniciada` | `en ejecución` | `implementada`
 
 | ID | Tarea | Estado |
 |---|---|---|
-| **T-060** | **Crear `brief/015_intake.md` — Plan de Construcción del harness 015 Intake.** 7 secciones siguiendo el patrón de `brief/010_discovery.md`: (1) definición estructural, (2) diseño agéntico (instancias A/B/C + workers + herramientas + escalamiento + checkpoints), (3) Sprint Contract, (4) rúbrica de evaluación con anclas few-shot, (5) handoff al 020, (6) flujo del arnés, (7) notas de construcción. Insumos: `harnesses/015_intake.md` (doc funcional), schema ampliado de `onboarding_config.json` (T-145), `brief/010_discovery.md` (referencia). El 015 consume `onboarding_config.json` + evento `onboarding_discovery_complete` del 010 e ingiere los datos del cliente para montar la capa **Bronce**. Ver DEC-055. | `no iniciada` |
+| **T-060** | **Crear `brief/015_intake.md` — Plan de Construcción del harness 015 Intake.** 7 secciones siguiendo el patrón de `brief/010_discovery.md`. Precedido por una sesión de entendimiento (Fase 0 + E11) que cerró 10 decisiones de diseño (ver **DEC-057**): formatos, fuente agnóstica + costura de adaptador, peso agéntico (A/B/C con workers livianos + TDD real), worker único, esquemas independientes, inmutabilidad write-once+SHA-256, incremental = archivo/entrega + manifest, Excel con memoria, persistencia (rebanada del intake, sin cobro), handoff atómico a 020‖025. Brief redactado y persistido. | `implementada` |
+| **T-070** | **Construir el harness 015 Intake** según `brief/015_intake.md`: agentes `intake-governor`, `intake-orchestrator`, `intake-processor`, `intake-evaluator`; skills/schemas (`intake-report-schema`, `intake-manifest-schema`, `intake-log-schema`, `intake-rubric`, `intake-state-schema`); módulos de código del pipeline P1→P8 con TDD real + ~20 fixtures (E9). Acopla la rebanada de persistencia del intake (`intake_log` + Storage Bronce + evento) con fallback JSON Fase 1. Ver DEC-057. | `no iniciada` |
 
 ---
 
@@ -83,5 +84,5 @@ Detectados en las corridas e2e. Ninguno impide avanzar al 015 (Test_006 dio APPR
 
 - Cada tarea es lo más atómica posible — una sola responsabilidad.
 - Al iniciar una tarea: cambiar estado a `en ejecución`. Al completarla: `implementada`.
-- Nuevas tareas se agregan con ID correlativo (el último usado es **T-182**).
+- Nuevas tareas se agregan con ID correlativo (el último usado es **T-182**; T-070 es el siguiente bloque de construcción del 015).
 - El detalle histórico de cualquier tarea ya implementada del 010 está en `progress/history/tasks_harness010.md`.

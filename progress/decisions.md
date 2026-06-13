@@ -67,6 +67,7 @@ Leer antes de proponer nuevas arquitecturas o enfoques.
 | DEC-053 | Allowlist de permisos cubre la herramienta PowerShell (Opción A) | Fundacional (infra) |
 | DEC-054 | Permisos por proyecto: bypassPermissions en el template de settings | Fundacional (infra) |
 | DEC-055 | Cerrado el 010; sigue el 015, con persistencia Capa 1 acoplada | Fundacional (rumbo) |
+| DEC-057 | Diseño del harness 015 Intake: 10 decisiones de entendimiento | H-015 |
 
 ---
 
@@ -601,6 +602,24 @@ El `deploy-harness.ps1` copia automáticamente ambas carpetas al proyecto client
 **Decisión:** Con el harness 010 Discovery **validado end-to-end** (Test_006 APPROVED 1.0, sesión 37), se da por **cerrado** y el siguiente paso del proyecto es **construir el harness 015 Intake** (tarea T-060 = `brief/015_intake.md`, Plan de Construcción de 7 secciones siguiendo el patrón de `brief/010_discovery.md`). La **Capa 1 de persistencia** (esquema operacional Supabase: tenants/contacts/client_config/subscriptions/events + adaptador fallback) **se acopla al diseño del 015**, no se construye antes en aislamiento — el 015 es el primer consumidor real de `client_config`/`tenants`, así que diseñar el 015 define los requisitos reales de la Capa 1. Mientras tanto, los agentes siguen escribiendo JSON local con `_pendiente_supabase: true` (modo Fase 1, P-04), que es el fallback previsto y no genera retrabajo al conmutar. Los ajustes menores pendientes del 010 (T-172, T-178, T-179, T-180) y la validación de T-181 quedan **diferidos como NO bloqueantes**.
 **Razón:** El operador eligió avanzar de harness en vez de seguir puliendo el 010 o construir persistencia en aislamiento. La guía `documents/supabase_persistence_guide.md` (D-A) ya recomendaba construir la Capa 1 "después de validar 010 e2e y antes/junto con el diseño del 015" — ambas condiciones se cumplen ahora. Avanzar al 015 mantiene el momentum sobre el handoff limpio que el 010 acaba de producir (`onboarding_config.json` + evento `onboarding_discovery_complete`), y deja que el diseño del consumidor (015) determine el detalle de la persistencia en vez de especularlo. Dos decisiones abiertas frenan parte del detalle de cobro de la Capa 1: T-031 (pasarela de pagos, D-B) y T-030 (pesos del ITO, D-F).
 **Impacto:** Próxima tarea de construcción = T-060 (`brief/015_intake.md`). Insumos ya disponibles: documentación funcional del 015 en `harnesses/` (T-048), schema ampliado de `onboarding_config.json` que el 015 consume (T-145), brief de referencia `brief/010_discovery.md`. La persistencia Capa 1 (T-171) se planifica junto al 015. Ver T-060, T-171, `documents/supabase_persistence_guide.md`.
+
+---
+
+## DEC-057 — Diseño del harness 015 Intake: 10 decisiones de entendimiento (sesión 38)
+**Fecha:** 2026-06-13
+**Decisión:** Antes de redactar `brief/015_intake.md` (T-060) se condujo una sesión de entendimiento (Fase 0 de la metodología + estrategia E11 amplio-a-estrecho) que cerró 10 decisiones de diseño, todas incorporadas en el brief:
+1. **Formatos:** CSV con detección de delimitador (`,` `;` `|`) + Excel `.xlsx`/`.xls`. Nada más (E4).
+2. **Fuentes:** el 015 es **agnóstico a la fuente** — recibe siempre un snapshot tabular vía interfaz `source_adapter`. Fase 1 implementa solo el adaptador manual/operador; el brief documenta —sin construir— conectores futuros (SFTP/ERP/BD). Una fuente viva (ERP/BD) debe materializarse como snapshot antes de tocar el 015 (lo obliga el invariante Bronce). El modelo Service-as-a-Software (sin API del cliente) aplica a la salida, no a la entrada.
+3. **Peso agéntico:** A/B/C completo pero **workers livianos** — el 015 es un pipeline determinístico, no de razonamiento. Worker = código con **TDD real**; LLM solo en puntos de juicio (encoding/delimitador/Excel). C usa rúbrica de **integridad/fidelidad**. E9 con ~20 fixtures de archivos rotos es la mayor palanca de calidad.
+4. **Worker único:** un solo `intake-processor` secuencial P1→P8 (la cadena no se paraleliza); módulos de código separados y testeables dentro. El paralelismo está *después* (020 ‖ 025), no dentro.
+5. **Esquemas independientes:** Esquema 2 ausente NO bloquea el Bronce del Esquema 1; se registra como "esperado, no recibido".
+6. **Inmutabilidad:** write-once + **SHA-256** verificable por los consumidores (convierte "no lo toqué" en prueba criptográfica).
+7. **Incremental:** un archivo Bronce inmutable por entrega + `_manifest.json` (unión lógica del histórico); **nunca** reescritura. Resuelve la contradicción doc "concatenar" vs "inmutable" y da auditoría temporal.
+8. **Excel con memoria:** heurística + confirmación del operador en la 1ª entrega → huella de formato (hoja/cabecera/delimitador/encoding) persistida en `client_config` y reutilizada después. **No** toca el schema del 010 (la metadata nace contra el archivo real, no contra la entrevista).
+9. **Persistencia:** alcance = rebanada del intake (Storage de Bronce + `intake_log` + evento), fallback JSON Fase 1. **No** se diseña cobro: T-030/T-031 bloquean solo la parte de cobro de la Capa 1, **no** el intake. `intake_log` = una fila por entrega con `files` JSONB (path+sha256+rows+date_range por archivo); `_manifest.json` es la fuente autoritativa. Reconciliación de nombre: tabla **`tenants`** (no `clients`, DEC-047).
+10. **Handoff:** evento `intake_complete` = **último paso** (atomicidad/checkpoint canónico); payload por referencia (E6) + hashes; Bronce **solo-lectura** para 020/025; 1 evento por entrega; fan-out paralelo a 020 ‖ 025 (DEC-024) disparado en Fase 1 por el conductor/operador (DEC-051).
+**Razón:** El operador pidió explícitamente entender el harness como proceso (entradas/procesos/salidas) y resolver dudas abiertas (formatos, conexión a ERP/BD/fuentes externas) antes de construir, alineado con `documents/principios.md` y `documents/metodologia.md`. La sesión separó dos ejes que se confunden (formato vs fuente/canal), ancló cada decisión en las reglas de negocio (medallón, Service-as-a-Software, E4/P6) y en decisiones previas (DEC-012, DEC-014, DEC-024, DEC-044, DEC-047, DEC-055).
+**Impacto:** `brief/015_intake.md` queda redactado con las 7 secciones. Agentes a crear en la construcción del 015: `intake-governor`, `intake-orchestrator`, `intake-processor`, `intake-evaluator`. Posibles ajustes menores nuevos detectados: ninguno bloqueante (la decisión 8 evita tocar el schema del 010). Ver T-060 (implementada), `brief/015_intake.md`, `harnesses/015_intake.md`.
 
 ---
 

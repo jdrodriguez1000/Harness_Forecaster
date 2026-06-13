@@ -1,13 +1,13 @@
 # Estado del Proyecto — FARO (Harness Forecaster)
 
 ## Última actualización
-2026-06-12 (sesión 37)
+2026-06-13 (sesión 38)
 
 ---
 
 ## LEER PRIMERO — estado en una frase
 
-**El harness 010 Discovery está TERMINADO y validado end-to-end. El siguiente paso es CONSTRUIR EL HARNESS 015 INTAKE (tarea T-060).**
+**El harness 010 Discovery está TERMINADO. El brief del 015 Intake (`brief/015_intake.md`, T-060) ya está REDACTADO tras una sesión de entendimiento que cerró 10 decisiones de diseño (DEC-057). El siguiente paso es CONSTRUIR el harness 015 (tarea T-070).**
 
 ---
 
@@ -30,16 +30,19 @@ Captura el contexto del cliente (entrevistas multi-stakeholder), calcula el ITO 
 
 ---
 
-## SIGUIENTE PASO — Construir el harness 015 Intake (T-060)
+## SIGUIENTE PASO — Construir el harness 015 Intake (T-070)
 
-**Tarea T-060: crear `brief/015_intake.md`** — el Plan de Construcción del 015 con las 7 secciones, replicando el patrón de `brief/010_discovery.md` (definición estructural, diseño agéntico A/B/C + workers, Sprint Contract, rúbrica de evaluación con anclas, handoff, flujo del arnés, notas de construcción).
+**El brief ya está escrito** (`brief/015_intake.md`, T-060 implementada). El siguiente paso es **construir** el harness siguiendo ese plan: agentes `intake-governor` / `intake-orchestrator` / `intake-processor` / `intake-evaluator`, skills/schemas (`intake-report-schema`, `intake-manifest-schema`, `intake-log-schema`, `intake-rubric`, `intake-state-schema`) y los módulos de código del pipeline P1→P8 con **TDD real** + ~20 fixtures de archivos rotos (E9).
 
-**Qué hace el 015:** consume el handoff del 010 (`010_discovery/deliverables/onboarding_config.json` + evento `600_persistence/events/onboarding_discovery_complete.json`) e ingiere los datos históricos del cliente para montar la capa **Bronce** (copia exacta intocable de la arquitectura medallón).
+**Qué hace el 015:** consume el handoff del 010 (`onboarding_config.json`/`client_config` + evento `onboarding_discovery_complete`) e ingiere los datos históricos del cliente para montar la capa **Bronce** (copia exacta intocable), emitiendo `intake_complete` que dispara 020 ‖ 025 en paralelo.
 
-**Insumos ya disponibles:**
-- Documentación funcional (entradas/procesos/salidas): `harnesses/015_intake.md`.
-- Schema ampliado de `onboarding_config.json` que el 015 consume (hecho en T-145).
-- Brief de referencia: `brief/010_discovery.md`.
+**Las 10 decisiones de diseño que rigen la construcción** están en **DEC-057** y desarrolladas en `brief/015_intake.md`. Lo esencial: pipeline determinístico (workers livianos), un único worker secuencial, fuente agnóstica con costura de adaptador (Fase 1 = manual/operador), Bronce write-once + SHA-256, Incremental = un archivo por entrega + manifest, Excel con huella de formato persistida en `client_config`, persistencia = rebanada del intake sin cobro (T-030/T-031 NO bloquean), handoff atómico (evento = último paso).
+
+**Insumos disponibles:**
+- Brief de construcción: `brief/015_intake.md` (recién escrito).
+- Documentación funcional: `harnesses/015_intake.md`.
+- Guía de persistencia: `documents/supabase_persistence_guide.md` (§6 Capa 1, §8 medallón, §10 conmutación).
+- Brief de referencia (patrón): `brief/010_discovery.md`.
 
 **Persistencia (DEC-055):** la **Capa 1 de persistencia** (esquema operacional Supabase: tenants/contacts/client_config/subscriptions/events + adaptador fallback) **se acopla al diseño del 015**, no se construye antes en aislamiento (el 015 es su primer consumidor real). Guía: `documents/supabase_persistence_guide.md`. Mientras tanto los agentes escriben JSON local con `_pendiente_supabase: true` (fallback Fase 1). Dos decisiones abiertas frenan parte del detalle de cobro: T-031 (pasarela de pagos) y T-030 (pesos del ITO).
 
