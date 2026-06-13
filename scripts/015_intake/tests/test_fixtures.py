@@ -52,8 +52,10 @@ def _cfg(**kw):
 # --- los 20 fixtures existen ---
 
 def test_existen_20_fixtures():
+    # Excluir auxiliares: prefijo "_" (generador), README y dotfiles como .gitattributes
+    # (este último protege los fixtures byte-sensibles de la normalización de Git).
     archivos = [f for f in os.listdir(FIXTURES)
-                if not f.startswith("_") and f != "README.md"]
+                if not f.startswith("_") and not f.startswith(".") and f != "README.md"]
     assert len(archivos) == 20
 
 

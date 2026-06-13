@@ -34,8 +34,8 @@ Sigue `plan/015_intake.md`. Esta tabla es el estado autoritativo de avance de la
 | 12 | ~20 fixtures (E9) con expectativas | `scripts/015_intake/tests/fixtures/` (20 archivos) + `_build_fixtures.py` (generador reproducible) + README con expectativa por fixture + `tests/test_fixtures.py` (18 tests verdes) | `implementada` |
 | 13 | Agentes A/B/C+Worker | `.claude/agents/intake-{governor,orchestrator,processor,evaluator}.md` — 4 agentes, modelo conductor (DEC-051), frontmatter válido + skills verificadas | `implementada` |
 | 14 | Conocimiento inicial | `templates/015_intake/{decisions_library,lessons_learned}_template.md` (plantillas curadas, deployadas a `015_intake/templates/`; el governor E10-A.8 las copia a `610_knowledge/` en runtime) | `implementada` |
-| 15 | Early-eval (E9, gate ≥ 0.7) | registro en `execution-state.json.early_eval` (runtime) | `no iniciada` ⬅ **SIGUIENTE** |
-| 16 | Smoke test / corrida e2e | en `Test_Forecaster/Test_NNN/` (terminal de prueba) | `no iniciada` |
+| 15 | Early-eval (E9, gate ≥ 0.7) | `scripts/015_intake/tests/EARLY_EVAL.md` — C aplica `intake-rubric` sobre los fixtures + verificación independiente del camino feliz (SHA-256 recalculado, bit-exactitud, evento). **Score 1.00, APPROVED.** Bug de higiene corregido (`.gitattributes` contado como fixture). El registro en `execution-state.json.early_eval` es runtime | `implementada` |
+| 16 | Smoke test / corrida e2e | en `Test_Forecaster/Test_NNN/` (terminal de prueba) | `no iniciada` ⬅ **SIGUIENTE** |
 
 ---
 
