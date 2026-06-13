@@ -35,20 +35,31 @@ Sigue `plan/015_intake.md`. Esta tabla es el estado autoritativo de avance de la
 | 13 | Agentes A/B/C+Worker | `.claude/agents/intake-{governor,orchestrator,processor,evaluator}.md` — 4 agentes, modelo conductor (DEC-051), frontmatter válido + skills verificadas | `implementada` |
 | 14 | Conocimiento inicial | `templates/015_intake/{decisions_library,lessons_learned}_template.md` (plantillas curadas, deployadas a `015_intake/templates/`; el governor E10-A.8 las copia a `610_knowledge/` en runtime) | `implementada` |
 | 15 | Early-eval (E9, gate ≥ 0.7) | `scripts/015_intake/tests/EARLY_EVAL.md` — C aplica `intake-rubric` sobre los fixtures + verificación independiente del camino feliz (SHA-256 recalculado, bit-exactitud, evento). **Score 1.00, APPROVED.** Bug de higiene corregido (`.gitattributes` contado como fixture). El registro en `execution-state.json.early_eval` es runtime | `implementada` |
-| 16 | Smoke test / corrida e2e | en `Test_Forecaster/Test_NNN/` (terminal de prueba) — **bloqueado por T-185** (el deploy no copia `pipeline/`) | `no iniciada` |
+| 16 | Smoke test / corrida e2e | en `Test_Forecaster/Test_007_Conservas/` (terminal de ejecución) — **DESBLOQUEADO** (T-185 hecha). Material listo en `test_data/015_intake_e2e/`. Ver T-191/T-192 abajo | `no iniciada` |
 
-> **Estado del 015:** los PASOS 1–15 están **implementados** (85 tests verdes, early-eval APPROVED 1.00). Solo falta el PASO 16 (corrida e2e en la terminal de prueba), que **depende del rediseño de despliegue de abajo** — sin el fix de `pipeline/` (T-185) el `intake-processor` no encuentra el código en el proyecto de prueba.
+> **Estado del 015:** los PASOS 1–15 están **implementados** (85 tests verdes, early-eval APPROVED 1.00). Solo falta el PASO 16 (corrida e2e), ya **desbloqueado** por T-185 (sesión 43). Se ejecutará como cadena completa 010→015 en `Test_007_Conservas` con material ya preparado y validado (T-191). Ver DEC-059.
 
 ---
 
-## ⭐ SIGUIENTE PASO REAL — Rediseño de despliegue: carga perezosa por harness (DEC-058)
+## ⭐ Corrida e2e 010→015 en `Test_007_Conservas` (PASO 16) — DEC-059
 
-Acordado en la sesión 42. Cambia el despliegue de "instalar los 11 harnesses de una vez" a **just-in-time por fase** con modelo **"switch"** (instalar el nuevo + podar el previo). Reduce el contexto del sistema (Claude Code carga la descripción de cada agente/skill al iniciar sesión). **El subconjunto T-185 es prerrequisito del PASO 16 del 015.** Detalle completo en **DEC-058**.
+Cadena completa con el cliente ficticio **Conservas del Pacífico S.A.S.** Dos terminales (LEC-053): la **ejecución** corre en `Test_Forecaster/Test_007_Conservas/` (sesión aparte); **esta** terminal (repo fuente) es la de **supervisión/apoyo** — observa, responde dudas, audita artefactos y aplica fixes; **no ejecuta el harness**.
 
 | ID | Tarea | Estado |
 |---|---|---|
-| **T-185** | **`deploy-harness.ps1` — copia recursiva de `scripts/{NNN}_{prefijo}/pipeline/`.** Hoy `deploy-harness.ps1:158` (`Get-ChildItem "$origenScripts\*" -File`) solo copia archivos de primer nivel (`README.md`, `pytest.ini`), dejando fuera el paquete `pipeline/` que el `intake-processor` necesita. **Prerrequisito ineludible del PASO 16.** Verificar también que copia `tests/` solo si se decide (el Worker no lo necesita; basta `pipeline/`). | `no iniciada` ⬅ **EMPEZAR AQUÍ** |
-| **T-186** | **`deploy-harness.ps1` — modelo "switch": podar el harness previo.** Añadir parámetro/lógica para remover los `{prefijo_previo}-*` agentes y skills al desplegar el nuevo (ya existe lógica de borrado de `{prefijo}-*` antes de copiar — extenderla al harness anterior). El handoff persiste en disco, así que es seguro. Respetar el matiz de DEC-058: no podar harnesses transversales (045/050/055) cuando se definan. | `no iniciada` |
+| **T-191** | **Preparar y validar el material de prueba e2e** en `test_data/015_intake_e2e/`: `brief.md` (Conservas del Pacífico, consistente con el dataset por construcción), `orders.csv` (~4.050 filas, `;` cp1252 con acentos, 40 negativas + 50 duplicados sembrados), `orders_sin_cantidad.csv` (rechazo), `_build_dataset.py` (generador reproducible) y `README.md` (receta + convención `800_inputs/` + resultados esperados). **Validado** contra los módulos reales del pipeline: cp1252/`;`, estructura aprobada vs rechazada, 40 negativas, 50 duplicados, warning de rango 26,8% (2,20 vs 3 años). | `implementada` |
+| **T-192** | **Ejecutar la corrida e2e 010→015 en `Test_007_Conservas`** (terminal de ejecución) y **supervisarla desde esta terminal**. (1) Deploy/`faro-setup` del 010, `brief.md` → `800_inputs/`, correr 010 hasta `PHASE_COMPLETE` (handoff: `client_config` + evento). (2) Deploy "switch" del 015, `orders.csv` → `800_inputs/`, correr 015 → Bronce bit-exacto + `intake_complete` + C aprueba ≥ 0.80. (3) opcional: `orders_sin_cantidad.csv` → `REJECTED_STRUCTURE`. **Auditar desde el repo fuente:** SHA-256 del Bronce vs manifest, bit-exactitud, evento como último artefacto, conteos del `intake_report` (40 negativas / 50 dups / warning de rango), `verdict.json`. **Verificar el mapeo** `client_config.anios_historial_disponible` → `run_intake.historial_declarado_anios` en el `intake-processor`. | `no iniciada` ⬅ **SIGUIENTE** |
+
+---
+
+## Rediseño de despliegue: carga perezosa por harness (DEC-058) — NO bloquea la corrida e2e
+
+Acordado en la sesión 42. Cambia el despliegue de "instalar los 11 harnesses de una vez" a **just-in-time por fase** con modelo **"switch"** (instalar el nuevo + podar el previo). Reduce el contexto del sistema (Claude Code carga la descripción de cada agente/skill al iniciar sesión). **T-185 (prerrequisito del PASO 16) ya está IMPLEMENTADA** (sesión 43); T-186..T-190 son mejoras de UX del despliegue que **no bloquean** la corrida e2e (el deploy del 015 puede hacerse a mano mientras tanto). Detalle completo en **DEC-058**.
+
+| ID | Tarea | Estado |
+|---|---|---|
+| **T-185** | **`deploy-harness.ps1` — copia recursiva de `scripts/{NNN}_{prefijo}/pipeline/`.** ✅ Tras copiar los archivos de primer nivel, el script ahora itera los **subdirectorios de código** y los copia recursivos (`Copy-Item -Recurse`), **excluyendo** `tests/`, `.pytest_cache/` y `__pycache__/` (el Worker solo necesita `pipeline/` + `pytest.ini`; los fixtures byte-sensibles no van al runtime). Poda cachés residuales tras copiar. **Verificado:** deploy real del 015 → `015_intake/pipeline/` con los 10 módulos, sin `tests/` ni cachés; `from pipeline.pipeline import run_intake` importa OK desde el destino. Desbloquea el PASO 16. | `implementada` |
+| **T-186** | **`deploy-harness.ps1` — modelo "switch": podar el harness previo.** Añadir parámetro/lógica para remover los `{prefijo_previo}-*` agentes y skills al desplegar el nuevo (ya existe lógica de borrado de `{prefijo}-*` antes de copiar — extenderla al harness anterior). El handoff persiste en disco, así que es seguro. Respetar el matiz de DEC-058: no podar harnesses transversales (045/050/055) cuando se definan. | `no iniciada` ⬅ siguiente del bloque de despliegue (no bloquea la corrida e2e) |
 | **T-187** | **`deploy-harness.ps1` — mapa "harness actual → siguiente".** Codificar la cadena (DEC-026 + pipeline `015→{020‖025}→030→035→040`). El fan-out 020‖025 es el único punto con dos siguientes — ofrecer ambos. | `no iniciada` |
 | **T-188** | **`faro-setup.ps1` — instalar solo el harness de arranque (010).** Quitar la copia indiscriminada de todos los agentes/skills; conservar el andamiaje (CLAUDE.md, settings, commands, workflows, `800_inputs/brief.md`, `FARO_HOME`) y **delegar agentes/skills/scripts a `deploy-harness.ps1 -Harness 010`**. | `no iniciada` |
 | **T-189** | **Crear `commands/faro-run.md` — comando conductor genérico (Opción B).** Detecta el **único** `*-governor.md` instalado y lo conduce (arranque `MODO: INIT` o continuación, según el estado que lee el governor). Reemplaza `/faro-discovery`, `/faro-intake`, etc. Reusar el patrón de `commands/faro-discovery.md` (verificar governor → cargar `conductor_loop.md` → spawnear governor). Deprecar `/faro-discovery` (lo absorbe `/faro-run`). | `no iniciada` |
@@ -131,5 +142,5 @@ Detectados en las corridas e2e. Ninguno impide avanzar al 015 (Test_006 dio APPR
 
 - Cada tarea es lo más atómica posible — una sola responsabilidad.
 - Al iniciar una tarea: cambiar estado a `en ejecución`. Al completarla: `implementada`.
-- Nuevas tareas se agregan con ID correlativo (el último usado es **T-190**; T-070 es el bloque de construcción del 015, T-185..T-190 el rediseño de despliegue DEC-058).
+- Nuevas tareas se agregan con ID correlativo (el último usado es **T-192**; T-070 es el bloque de construcción del 015, T-185..T-190 el rediseño de despliegue DEC-058, T-191/T-192 la corrida e2e DEC-059).
 - El detalle histórico de cualquier tarea ya implementada del 010 está en `progress/history/tasks_harness010.md`.

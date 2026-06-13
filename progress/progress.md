@@ -1,13 +1,13 @@
 # Estado del Proyecto — FARO (Harness Forecaster)
 
 ## Última actualización
-2026-06-13 (sesión 42)
+2026-06-13 (sesión 43)
 
 ---
 
 ## LEER PRIMERO — estado en una frase
 
-**El harness 010 Discovery está TERMINADO. La CONSTRUCCIÓN del harness 015 Intake (T-070) está EN CURSO siguiendo `plan/015_intake.md` (16 pasos). Hechos: PASOS 1–3 (andamiaje, estado, 5 contratos) y módulos PASO 4 (`source_adapter`), 5 (`format_detector`, canario cp1252), 6 (`schema_validator`, GATE veto D2), 7 (`type_validator` P3 + `range_evaluator` P5), 8 (`deduplicator` P4), 9 (`bronze_writer` P6, veto D5), 10 (`report_builder` P7), 11 (`pipeline.py` — orquestación P1→P8 con `run_intake`, evento como ÚLTIMO artefacto) y 12 (batería de 20 fixtures E9 + `test_fixtures.py`) con TDD real — 85 tests verdes (`pytest -q`). PASO 13 ✅ — los 4 agentes (`intake-governor/orchestrator/processor/evaluator`) en `.claude/agents/`, modelo conductor (DEC-051). PASO 14 ✅ — conocimiento inicial curado como **plantillas** en `templates/015_intake/`; el `intake-governor` E10-A.8 las copia a `610_knowledge/` en runtime. PASO 15 ✅ — early-eval (E9): C aplicó la `intake-rubric` sobre los 20 fixtures + verificación independiente del camino feliz (SHA-256 recalculado == manifest, Bronce bit-exacto, evento como último artefacto) → **score 1.00, APPROVED** (supera el gate de construcción ≥ 0.7 y el operacional ≥ 0.80); evidencia en `scripts/015_intake/tests/EARLY_EVAL.md`. De paso se corrigió un bug de higiene de test (`.gitattributes` contado como fixture; 85 tests verdes). ➡️ **Los PASOS 1–15 del 015 están TERMINADOS; solo falta el PASO 16 (corrida e2e en la terminal de prueba), que está BLOQUEADO por el rediseño de despliegue acordado en la sesión 42 (DEC-058). El SIGUIENTE PASO REAL es T-185: `deploy-harness.ps1` no copia el paquete `pipeline/`, así que el `intake-processor` no encontraría el código en el proyecto de prueba.** Ver el bloque "⭐ SIGUIENTE PASO REAL — Rediseño de despliegue" en `tasks.md` (T-185..T-190) y DEC-058. El detalle paso a paso del 015 vive en `tasks.md` (bloque "Construcción del 015 — desglose por PASO").**
+**El harness 010 Discovery está TERMINADO. La CONSTRUCCIÓN del harness 015 Intake (T-070) está TERMINADA en sus PASOS 1–15 (85 tests verdes, early-eval APPROVED 1.00). Solo falta el PASO 16: la corrida e2e, que ya está DESBLOQUEADA — `T-185` (deploy copia recursivo de `scripts/{NNN}/pipeline/`) quedó IMPLEMENTADA y verificada en la sesión 43. ➡️ EL SIGUIENTE PASO REAL es EJECUTAR la corrida e2e de cadena completa 010→015 en una terminal aparte llamada `Test_007_Conservas` (DEC-059). 🔭 ESTA TERMINAL (repo fuente `Harness_Forecaster`) ES LA TERMINAL DE SUPERVISIÓN/APOYO: no ejecuta el harness — observa el comportamiento del 010 al 015, responde dudas del operador, audita artefactos (Bronce/manifest/eventos/verdict) y aplica fixes al código fuente si algo falla. El material de prueba ya está listo y VALIDADO en `test_data/015_intake_e2e/` (brief Conservas del Pacífico + `orders.csv` + `orders_sin_cantidad.csv` + generador + README). Ver la sección "Corrida e2e 010→015" abajo, DEC-059, y el bloque de tareas. El detalle paso a paso de la construcción del 015 sigue en `tasks.md` (bloque "Construcción del 015 — desglose por PASO"); el rediseño de despliegue restante (T-186..T-190, DEC-058) NO bloquea la corrida y puede hacerse en paralelo o después.**
 
 ---
 
@@ -55,25 +55,49 @@ Captura el contexto del cliente (entrevistas multi-stakeholder), calcula el ITO 
 
 **PASO 15 ✅ (sesión 42)** — Early-eval (E9). C aplicó la `intake-rubric` (7 dimensiones) sobre la batería de 20 fixtures (PASO 12) y verificó **independientemente** el camino feliz (canario `cp1252_acentos.csv`): recálculo del SHA-256 que coincide con el manifest, Bronce byte-idéntico a la entrada, write-once (`rewritten=False` al re-correr), reporte completo, y evento `intake_complete` como último artefacto con `next_harnesses:[020,025]`. **Las 7 dimensiones = 1.0 → score global 1.00, sin vetos, APPROVED.** Evidencia en `scripts/015_intake/tests/EARLY_EVAL.md`. Hallazgo de higiene corregido en el paso: `test_existen_20_fixtures` contaba el `.gitattributes` (intencional para proteger los fixtures byte-sensibles de la normalización de Git) como un fixture → ahora excluye dotfiles; **85 tests verdes**.
 
-**PASO 16 (pendiente, BLOQUEADO)** — Prueba de humo / corrida e2e en `Test_Forecaster/Test_NNN/` (terminal de prueba, LEC-053). Flujo completo A→B→Worker→C→A con un tenant que ya pasó el 010 (P-4, P-5): consumir el evento `onboarding_discovery_complete`, presentar Sprint Contract, montar Bronce bit-exacto + manifest, emitir `intake_complete`, y C aprueba ≥ 0.80. Incluye la mini-corrida de rechazo (CSV sin `cantidad_solicitada` → `intake_rejection.json`, sin Bronce ni evento). Es el ÚLTIMO paso del plan de construcción del 015. **No se puede ejecutar hasta resolver T-185** (el deploy no lleva el `pipeline/` al proyecto de prueba). Para el dataset de prueba: un `orders.csv` `;` cp1252 con acentos, varios miles de filas, con negativas y duplicados internos sembrados (+ un CSV sin `cantidad_solicitada` para el rechazo); el tenant debe tener el handoff del 010 (evento + `client_config` + carpeta Bronce) — ofrecí generar el dataset, pendiente de hacerlo en la corrida.
+**PASO 16 (pendiente, DESBLOQUEADO — por ejecutar en `Test_007_Conservas`)** — Prueba de humo / corrida e2e en `Test_Forecaster/Test_007_Conservas/` (terminal de ejecución, LEC-053). Flujo de **cadena completa 010→015** con el cliente ficticio Conservas del Pacífico: correr el 010 desde el `brief.md` → handoff real (`client_config` + evento `onboarding_discovery_complete`) → correr el 015 (A→B→Worker→C→A): presentar Sprint Contract, montar Bronce bit-exacto + manifest, emitir `intake_complete`, y C aprueba ≥ 0.80. Incluye la mini-corrida de rechazo (`orders_sin_cantidad.csv` → `intake_rejection.json`, sin Bronce ni evento). **T-185 ya está resuelta**, así que el `intake-processor` encontrará el `pipeline/` desplegado. **Material de prueba listo y validado** en `test_data/015_intake_e2e/` (ver DEC-059 y la sección "Corrida e2e 010→015" abajo).
 
 ---
 
-## ⭐ SIGUIENTE PASO REAL (definido sesión 42, por ejecutar) — Rediseño de despliegue: carga perezosa por harness (DEC-058)
+## ⭐ Corrida e2e 010→015 en `Test_007_Conservas` — EL SIGUIENTE PASO REAL (DEC-059)
+
+**Cómo está organizada la prueba (dos terminales, LEC-053):**
+
+- 🖥️ **Terminal de EJECUCIÓN = `Test_Forecaster/Test_007_Conservas/`** (una sesión de Claude Code **aparte**, sobre un proyecto cliente dedicado). Ahí se despliegan y corren de verdad el 010 y luego el 015: agentes, gates, evaluador, Bronce, eventos.
+- 🔭 **Terminal de SUPERVISIÓN/APOYO = ESTA sesión (repo fuente `Harness_Forecaster`).** Su papel durante la corrida: **observar el comportamiento del harness del 010 al 015, responder dudas del operador, auditar los artefactos** (Bronce bit-exacto, `_manifest.json`, eventos `onboarding_discovery_complete`/`intake_complete`, `verdict.json`), **diagnosticar y aplicar fixes al código fuente** si algo falla. **Aquí NO se ejecuta el harness.** Es el mismo rol de soporte que tuvo este repo en las corridas del 010 (Test_004A/005/006).
+
+**Cliente ficticio:** Conservas del Pacífico S.A.S. (Cali, Colombia) — conservas de alimentos B2B, escala mediana (M/L), ~350 SKUs, ~45 clientes, ~3 años **declarados** (rango real ~2,2 años → warning de rango a propósito). Entrega **solo Pedidos** (`tiene_esquema2 = false`).
+
+**Material de prueba (repo fuente, `test_data/015_intake_e2e/`) — listo y VALIDADO:**
+- `brief.md` — brief de Conservas (input del 010), consistente con el dataset por construcción.
+- `orders.csv` — entrega principal del 015: ~4.050 filas, `;` cp1252 con acentos, **40** cantidades negativas + **50** duplicados internos sembrados. → `EXECUTION_COMPLETE`.
+- `orders_sin_cantidad.csv` — mini-corrida de rechazo: sin la columna de cantidad → `REJECTED_STRUCTURE`, sin Bronce ni evento (veto D2).
+- `_build_dataset.py` — generador reproducible (semilla fija). `README.md` — receta del flujo + convención + resultados esperados.
+- **Validado contra los módulos reales del pipeline** (sesión 43): cp1252/`;` OK, estructura aprobada vs rechazada, 40 negativas, 50 duplicados, warning de rango 26,8% (2,20 vs 3 años). No es opinión — lo midió el código.
+
+**Convención de entrada (Fase 1):** todos los archivos del cliente van a `800_inputs/` — `brief.md` (010) y `orders.csv` (015). El Bronce **NO se pega a mano**; lo escribe el 015 en `…/tenants/{id}/1000_data/005_bronze/`. El nombre del archivo que entrega el cliente es irrelevante (el tipo se detecta por *magic bytes*, el esquema por el *slot* `snapshot_esquema1/2`); solo el Bronce tiene nombre fijo (`orders_*`/`inventory_*`).
+
+**Modelo de dos esquemas (recordatorio para auditar):** Esquema 1 Pedidos (obligatorio; falta de un mínimo = rechazo de toda la entrega, veto D2) + Esquema 2 Inventario (opcional; **nunca** bloquea — estados `NOT_EXPECTED`/`EXPECTED_NOT_RECEIVED`/`ESTRUCTURA_INVALIDA`/`CREATED`). Cada archivo = snapshot independiente con su propio Bronce + SHA-256.
+
+**Pasos para arrancar la prueba (en la terminal de ejecución):** (1) `faro-setup`/deploy del 010 en `Test_007_Conservas`, copiar `brief.md` → `800_inputs/`; correr el 010 hasta `PHASE_COMPLETE`. (2) Deploy "switch" del 015, copiar `orders.csv` → `800_inputs/`; correr el 015 → Bronce + `intake_complete` + C aprueba. (3) opcional: `orders_sin_cantidad.csv` → rechazo. Detalle en `test_data/015_intake_e2e/README.md`.
+
+---
+
+## ⭐ Rediseño de despliegue: carga perezosa por harness (DEC-058) — NO bloquea la corrida
 
 **Decisión de la sesión 42** (ver **DEC-058** completa). El operador pidió que los agentes/skills de un harness NO se instalen todos de golpe (Claude Code carga la **descripción** de cada agente/skill al iniciar sesión → contexto inútil en la fase activa). Se acordó **carga perezosa just-in-time por fase**, modelo **"switch"** (instalar el nuevo harness + **podar** el anterior — su handoff ya vive en disco), y un **comando conductor genérico `/faro-run`** (Opción B) que detecta el único `*-governor.md` instalado y lo conduce.
 
 **UX objetivo por transición:** el harness termina → el sistema pregunta *"¿despliego el {siguiente}?"* → operador dice **"sí"** → el conductor ejecuta `deploy-harness.ps1 -Harness {N}` (+ poda) vía `$env:FARO_HOME` → instruye **reiniciar Claude Code** (los agentes se escanean al iniciar sesión; el reinicio activa el nuevo harness y resetea el contexto al mínimo) → operador reinicia y corre **`/faro-run`**.
 
 **Plan de implementación (T-185..T-190 en `tasks.md`), en orden:**
-1. **T-185 (EMPEZAR AQUÍ, desbloquea el PASO 16):** `deploy-harness.ps1` debe copiar `scripts/{NNN}_{prefijo}/pipeline/` recursivo (hoy `:158` solo copia archivos de primer nivel).
+1. **T-185 ✅ IMPLEMENTADA (sesión 43, desbloquea el PASO 16):** `deploy-harness.ps1` ahora copia los subdirectorios de código (`pipeline/`) recursivos, excluyendo `tests/`/`.pytest_cache/`/`__pycache__/`. Verificado con un deploy real (10 módulos, `run_intake` importa OK desde el destino).
 2. **T-186:** poda del harness previo (switch). Matiz DEC-058: no podar los transversales 045/050/055 cuando existan.
 3. **T-187:** mapa "harness actual → siguiente" (cadena DEC-026; bifurcación 020‖025 ofrece ambos).
 4. **T-188:** `faro-setup.ps1` instala solo el 010 (delega a `deploy-harness -Harness 010`); conserva andamiaje + `FARO_HOME`.
 5. **T-189:** crear `commands/faro-run.md` genérico (reusar patrón de `commands/faro-discovery.md`); deprecar `/faro-discovery`.
 6. **T-190:** el cierre del governor (en `conductor_loop.md`, lo ejecuta la sesión principal — DEC-051) ofrece el salto + instrucción de reinicio.
 
-**Recomendación de secuencia:** hacer **T-185 primero** (es chico y desbloquea el e2e del 015); luego, si se quiere, correr el PASO 16 del 015 con el deploy ya funcional; y completar T-186..T-190 (el modelo switch completo) en la misma o siguiente sesión.
+**Recomendación de secuencia:** **T-185 ya está hecha**, así que el PASO 16 (corrida e2e en `Test_007_Conservas`) puede arrancar ya. T-186..T-190 (el modelo switch completo) **no bloquean** la corrida — pueden hacerse en paralelo o después. Nota: sin T-186..T-190, el deploy del 015 a `Test_007_Conservas` se hace a mano con `deploy-harness.ps1 -Harness 015 -Destino .` (y, si se quiere contexto limpio, podando a mano los `discovery-*` del proyecto de prueba).
 
 ---
 

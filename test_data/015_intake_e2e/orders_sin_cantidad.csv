@@ -1,0 +1,201 @@
+Fecha del pedido;Código cliente;Código producto;Nombre producto;Categoría;Ciudad;Cantidad entregada;Estado pedido;Unidad medida
+2024-08-07;CLI-029;DUL-069;Mermelada de mora 300g;Dulces y mermeladas;Cali;12;Pendiente;Unidad
+2024-04-05;CLI-026;PES-038;Atún en agua 170g;Conservas de pescado;Pereira;24;Pendiente;Caja x 24
+2025-07-11;CLI-037;VEG-007;Fríjol cargamanto 400g;Vegetales enlatados;Bogotá;12;Entregado;Display x 6
+2026-02-02;CLI-037;PES-066;Sardinas en salsa de tomate;Conservas de pescado;Bogotá;234;Pendiente;Display x 6
+2025-02-15;CLI-013;VEG-013;Maíz dulce 300g;Vegetales enlatados;Medellín;24;Entregado;Unidad
+2024-06-25;CLI-022;GRA-060;Lenteja 500g;Granos y cereales;Barranquilla;18;Entregado;Unidad
+2025-04-02;CLI-044;VEG-021;Arvejas verdes 300g;Vegetales enlatados;Barranquilla;12;Pendiente;Caja x 12
+2025-02-03;CLI-013;DUL-043;Mermelada de mora 300g;Dulces y mermeladas;Medellín;240;Entregado;Display x 6
+2024-11-24;CLI-023;VEG-044;Fríjol cargamanto 400g;Vegetales enlatados;Cali;12;Entregado;Caja x 24
+2025-04-01;CLI-029;PES-028;Atún lomitos 80g;Conservas de pescado;Cali;12;Entregado;Display x 6
+2024-01-26;CLI-001;PES-018;Atún en agua 170g;Conservas de pescado;Bucaramanga;48;Entregado;Caja x 24
+2024-12-01;CLI-006;SAL-057;Ají picante 150g;Salsas y aderezos;Barranquilla;6;Entregado;Unidad
+2025-09-24;CLI-042;PES-062;Sardinas en salsa de tomate;Conservas de pescado;Bogotá;120;Entregado;Caja x 24
+2024-01-27;CLI-007;DUL-037;Arequipe 250g;Dulces y mermeladas;Bogotá;12;Entregado;Unidad
+2025-11-27;CLI-041;VEG-058;Maíz dulce 300g;Vegetales enlatados;Barranquilla;60;Entregado;Display x 6
+2024-07-05;CLI-005;SAL-037;Mostaza 250g;Salsas y aderezos;Bogotá;24;Pendiente;Display x 6
+2025-05-31;CLI-035;PES-038;Atún en agua 170g;Conservas de pescado;Medellín;240;Entregado;Caja x 24
+2025-09-04;CLI-035;SAL-010;Mostaza 250g;Salsas y aderezos;Medellín;12;Cancelado;Unidad
+2024-03-07;CLI-012;SAL-021;Salsa de tomate 200g;Salsas y aderezos;Barranquilla;24;Cancelado;Unidad
+2024-02-07;CLI-045;GRA-008;Avena en hojuelas;Granos y cereales;Cali;0;Entregado;Display x 6
+2024-09-15;CLI-002;VEG-040;Maíz dulce 300g;Vegetales enlatados;Bogotá;96;Cancelado;Unidad
+2025-11-25;CLI-008;DUL-017;Arequipe 250g;Dulces y mermeladas;Medellín;24;Pendiente;Caja x 12
+2024-09-12;CLI-009;SAL-043;Mostaza 250g;Salsas y aderezos;Bogotá;108;Entregado;Caja x 24
+2026-03-06;CLI-024;GRA-037;Garbanzo 500g;Granos y cereales;Bucaramanga;216;Entregado;Caja x 12
+2025-05-17;CLI-009;PES-035;Atún lomitos 80g;Conservas de pescado;Bogotá;120;Entregado;Caja x 12
+2024-03-22;CLI-011;VEG-013;Maíz dulce 300g;Vegetales enlatados;Barranquilla;60;Cancelado;Unidad
+2026-01-24;CLI-018;PES-038;Atún en agua 170g;Conservas de pescado;Medellín;6;Entregado;Caja x 24
+2025-05-01;CLI-009;SAL-057;Ají picante 150g;Salsas y aderezos;Bogotá;60;Pendiente;Unidad
+2025-03-25;CLI-034;GRA-003;Garbanzo 500g;Granos y cereales;Pereira;48;Entregado;Display x 6
+2024-09-14;CLI-035;PES-026;Atún en aceite 170g;Conservas de pescado;Medellín;48;Pendiente;Display x 6
+2025-09-10;CLI-043;VEG-009;Arvejas verdes 300g;Vegetales enlatados;Pereira;12;Cancelado;Display x 6
+2025-01-09;CLI-022;DUL-008;Bocadillo veleño 400g;Dulces y mermeladas;Barranquilla;6;Entregado;Display x 6
+2025-12-31;CLI-027;DUL-028;Mermelada de mora 300g;Dulces y mermeladas;Bucaramanga;60;Entregado;Display x 6
+2025-03-31;CLI-013;DUL-069;Mermelada de mora 300g;Dulces y mermeladas;Medellín;0;Entregado;Unidad
+2025-09-18;CLI-026;PES-037;Atún lomitos 80g;Conservas de pescado;Pereira;240;Entregado;Display x 6
+2025-01-03;CLI-033;GRA-011;Garbanzo 500g;Granos y cereales;Barranquilla;120;Entregado;Caja x 24
+2024-07-04;CLI-018;GRA-056;Lenteja 500g;Granos y cereales;Medellín;48;Entregado;Display x 6
+2024-04-15;CLI-020;VEG-026;Maíz dulce 300g;Vegetales enlatados;Bogotá;240;Cancelado;Caja x 24
+2024-07-19;CLI-042;SAL-062;Salsa de tomate 200g;Salsas y aderezos;Bogotá;6;Cancelado;Caja x 12
+2026-01-07;CLI-025;GRA-038;Garbanzo 500g;Granos y cereales;Bucaramanga;6;Entregado;Unidad
+2024-08-30;CLI-007;PES-040;Atún lomitos 80g;Conservas de pescado;Bogotá;240;Entregado;Caja x 12
+2024-03-06;CLI-003;DUL-024;Mermelada de mora 300g;Dulces y mermeladas;Bogotá;0;Cancelado;Caja x 12
+2025-10-13;CLI-003;SAL-060;Salsa de tomate 200g;Salsas y aderezos;Bogotá;60;Entregado;Unidad
+2025-12-30;CLI-021;GRA-025;Garbanzo 500g;Granos y cereales;Pereira;240;Cancelado;Display x 6
+2025-09-25;CLI-024;SAL-021;Salsa de tomate 200g;Salsas y aderezos;Bucaramanga;120;Entregado;Unidad
+2025-12-09;CLI-031;GRA-025;Garbanzo 500g;Granos y cereales;Medellín;24;Entregado;Display x 6
+2025-12-07;CLI-004;SAL-050;Mayonesa 380g;Salsas y aderezos;Cali;24;Entregado;Caja x 12
+2025-05-25;CLI-015;DUL-025;Bocadillo veleño 400g;Dulces y mermeladas;Pereira;60;Entregado;Caja x 24
+2025-06-16;CLI-006;GRA-057;Avena en hojuelas;Granos y cereales;Barranquilla;12;Pendiente;Unidad
+2024-04-22;CLI-030;GRA-042;Lenteja 500g;Granos y cereales;Bucaramanga;216;Entregado;Display x 6
+2024-09-20;CLI-027;SAL-051;Salsa de tomate 200g;Salsas y aderezos;Bucaramanga;24;Entregado;Display x 6
+2024-03-16;CLI-023;GRA-010;Avena en hojuelas;Granos y cereales;Cali;24;Entregado;Caja x 24
+2024-07-28;CLI-007;SAL-050;Mayonesa 380g;Salsas y aderezos;Bogotá;24;Entregado;Caja x 12
+2025-08-18;CLI-040;PES-033;Sardinas en salsa de tomate;Conservas de pescado;Pereira;24;Entregado;Unidad
+2024-12-04;CLI-015;PES-005;Atún lomitos 80g;Conservas de pescado;Pereira;24;Cancelado;Display x 6
+2024-12-09;CLI-004;PES-069;Atún en agua 170g;Conservas de pescado;Cali;24;Entregado;Unidad
+2025-01-07;CLI-042;GRA-054;Garbanzo 500g;Granos y cereales;Bogotá;0;Entregado;Caja x 24
+2025-07-03;CLI-016;GRA-014;Avena en hojuelas;Granos y cereales;Barranquilla;0;Pendiente;Display x 6
+2025-08-26;CLI-003;PES-044;Atún en aceite 170g;Conservas de pescado;Bogotá;60;Entregado;Caja x 24
+2025-04-07;CLI-031;DUL-042;Bocadillo veleño 400g;Dulces y mermeladas;Medellín;0;Entregado;Caja x 12
+2024-11-12;CLI-044;GRA-046;Lenteja 500g;Granos y cereales;Barranquilla;0;Pendiente;Unidad
+2025-08-10;CLI-002;GRA-025;Garbanzo 500g;Granos y cereales;Bogotá;18;Entregado;Display x 6
+2026-03-11;CLI-031;VEG-065;Maíz dulce 300g;Vegetales enlatados;Medellín;6;Entregado;Caja x 24
+2025-03-10;CLI-027;GRA-018;Garbanzo 500g;Granos y cereales;Bucaramanga;6;Pendiente;Unidad
+2024-11-23;CLI-009;GRA-052;Avena en hojuelas;Granos y cereales;Bogotá;0;Cancelado;Unidad
+2024-12-22;CLI-037;GRA-003;Garbanzo 500g;Granos y cereales;Bogotá;24;Entregado;Display x 6
+2024-06-02;CLI-042;GRA-017;Lenteja 500g;Granos y cereales;Bogotá;12;Pendiente;Unidad
+2026-02-26;CLI-016;DUL-033;Bocadillo veleño 400g;Dulces y mermeladas;Barranquilla;6;Entregado;Unidad
+2024-06-13;CLI-002;VEG-070;Champiñones rebanados;Vegetales enlatados;Bogotá;48;Entregado;Caja x 12
+2024-08-31;CLI-019;VEG-042;Fríjol cargamanto 400g;Vegetales enlatados;Pereira;12;Entregado;Unidad
+2024-04-13;CLI-003;GRA-022;Garbanzo 500g;Granos y cereales;Bogotá;228;Entregado;Caja x 12
+2024-06-05;CLI-005;VEG-033;Fríjol cargamanto 400g;Vegetales enlatados;Bogotá;60;Cancelado;Display x 6
+2025-01-25;CLI-036;VEG-028;Arvejas verdes 300g;Vegetales enlatados;Barranquilla;120;Pendiente;Caja x 24
+2025-07-27;CLI-004;SAL-041;Mostaza 250g;Salsas y aderezos;Cali;6;Entregado;Display x 6
+2026-02-14;CLI-027;SAL-013;Mayonesa 380g;Salsas y aderezos;Bucaramanga;60;Entregado;Caja x 12
+2024-09-14;CLI-011;GRA-030;Garbanzo 500g;Granos y cereales;Barranquilla;12;Entregado;Caja x 24
+2025-01-08;CLI-040;VEG-053;Champiñones rebanados;Vegetales enlatados;Pereira;120;Entregado;Unidad
+2024-03-28;CLI-019;GRA-025;Garbanzo 500g;Granos y cereales;Pereira;240;Entregado;Display x 6
+2025-08-25;CLI-013;DUL-020;Arequipe 250g;Dulces y mermeladas;Medellín;48;Cancelado;Display x 6
+2024-03-22;CLI-001;GRA-018;Garbanzo 500g;Granos y cereales;Bucaramanga;48;Entregado;Unidad
+2025-02-18;CLI-018;DUL-041;Mermelada de mora 300g;Dulces y mermeladas;Medellín;12;Entregado;Caja x 12
+2025-06-17;CLI-036;DUL-008;Bocadillo veleño 400g;Dulces y mermeladas;Barranquilla;60;Entregado;Display x 6
+2024-09-29;CLI-045;SAL-007;Salsa de tomate 200g;Salsas y aderezos;Cali;12;Entregado;Unidad
+2025-12-15;CLI-023;PES-008;Atún lomitos 80g;Conservas de pescado;Cali;48;Entregado;Display x 6
+2024-05-04;CLI-042;GRA-002;Avena en hojuelas;Granos y cereales;Bogotá;12;Cancelado;Caja x 12
+2024-03-19;CLI-030;VEG-031;Champiñones rebanados;Vegetales enlatados;Bucaramanga;240;Entregado;Caja x 12
+2024-05-28;CLI-019;DUL-050;Arequipe 250g;Dulces y mermeladas;Pereira;120;Entregado;Caja x 24
+2025-10-12;CLI-030;PES-004;Sardinas en salsa de tomate;Conservas de pescado;Bucaramanga;240;Entregado;Display x 6
+2024-08-23;CLI-016;VEG-019;Maíz dulce 300g;Vegetales enlatados;Barranquilla;6;Cancelado;Caja x 12
+2025-03-04;CLI-038;DUL-018;Mermelada de mora 300g;Dulces y mermeladas;Cali;120;Entregado;Unidad
+2025-02-16;CLI-024;GRA-004;Avena en hojuelas;Granos y cereales;Bucaramanga;12;Entregado;Caja x 12
+2024-07-27;CLI-010;PES-003;Atún lomitos 80g;Conservas de pescado;Medellín;240;Entregado;Display x 6
+2025-06-05;CLI-027;GRA-002;Avena en hojuelas;Granos y cereales;Bucaramanga;0;Entregado;Caja x 12
+2025-05-01;CLI-020;VEG-039;Champiñones rebanados;Vegetales enlatados;Bogotá;12;Entregado;Caja x 12
+2024-03-14;CLI-018;DUL-033;Bocadillo veleño 400g;Dulces y mermeladas;Medellín;12;Entregado;Unidad
+2026-03-15;CLI-036;GRA-041;Avena en hojuelas;Granos y cereales;Barranquilla;12;Cancelado;Caja x 24
+2024-08-17;CLI-014;VEG-066;Fríjol cargamanto 400g;Vegetales enlatados;Cali;12;Pendiente;Caja x 24
+2024-12-06;CLI-008;SAL-042;Mayonesa 380g;Salsas y aderezos;Medellín;0;Pendiente;Caja x 24
+2026-01-30;CLI-034;PES-035;Atún lomitos 80g;Conservas de pescado;Pereira;24;Pendiente;Caja x 12
+2025-06-21;CLI-013;DUL-067;Arequipe 250g;Dulces y mermeladas;Medellín;12;Entregado;Unidad
+2025-01-15;CLI-030;PES-012;Atún en agua 170g;Conservas de pescado;Bucaramanga;120;Cancelado;Caja x 12
+2024-08-07;CLI-019;GRA-041;Avena en hojuelas;Granos y cereales;Pereira;0;Entregado;Caja x 24
+2024-02-01;CLI-016;GRA-046;Lenteja 500g;Granos y cereales;Barranquilla;240;Cancelado;Unidad
+2024-02-03;CLI-044;PES-042;Atún en aceite 170g;Conservas de pescado;Barranquilla;48;Entregado;Display x 6
+2024-08-23;CLI-017;DUL-049;Bocadillo veleño 400g;Dulces y mermeladas;Bogotá;24;Entregado;Caja x 24
+2026-03-09;CLI-023;VEG-067;Fríjol cargamanto 400g;Vegetales enlatados;Cali;0;Entregado;Caja x 12
+2026-02-27;CLI-003;PES-061;Atún lomitos 80g;Conservas de pescado;Bogotá;0;Entregado;Caja x 24
+2025-10-29;CLI-036;GRA-067;Garbanzo 500g;Granos y cereales;Barranquilla;24;Entregado;Caja x 12
+2025-12-28;CLI-028;GRA-029;Avena en hojuelas;Granos y cereales;Pereira;48;Cancelado;Display x 6
+2024-01-27;CLI-037;PES-019;Atún en agua 170g;Conservas de pescado;Bogotá;240;Entregado;Caja x 24
+2025-02-14;CLI-009;SAL-040;Mostaza 250g;Salsas y aderezos;Bogotá;24;Entregado;Caja x 24
+2025-10-30;CLI-020;DUL-031;Arequipe 250g;Dulces y mermeladas;Bogotá;0;Entregado;Unidad
+2025-04-10;CLI-021;GRA-029;Avena en hojuelas;Granos y cereales;Pereira;240;Entregado;Display x 6
+2024-09-26;CLI-028;GRA-043;Garbanzo 500g;Granos y cereales;Pereira;24;Entregado;Caja x 24
+2024-10-11;CLI-039;DUL-061;Mermelada de mora 300g;Dulces y mermeladas;Bogotá;48;Entregado;Unidad
+2024-05-06;CLI-036;DUL-016;Bocadillo veleño 400g;Dulces y mermeladas;Barranquilla;0;Pendiente;Caja x 12
+2025-05-13;CLI-024;DUL-042;Bocadillo veleño 400g;Dulces y mermeladas;Bucaramanga;48;Entregado;Caja x 12
+2025-11-28;CLI-004;SAL-053;Ají picante 150g;Salsas y aderezos;Cali;12;Entregado;Caja x 24
+2024-02-11;CLI-044;DUL-042;Bocadillo veleño 400g;Dulces y mermeladas;Barranquilla;120;Entregado;Caja x 12
+2025-06-03;CLI-022;SAL-001;Ají picante 150g;Salsas y aderezos;Barranquilla;6;Entregado;Caja x 12
+2025-02-06;CLI-011;DUL-011;Bocadillo veleño 400g;Dulces y mermeladas;Barranquilla;120;Cancelado;Caja x 24
+2026-02-26;CLI-029;PES-052;Atún en aceite 170g;Conservas de pescado;Cali;54;Pendiente;Caja x 24
+2025-03-16;CLI-036;PES-037;Atún lomitos 80g;Conservas de pescado;Barranquilla;60;Cancelado;Display x 6
+2024-12-10;CLI-044;GRA-011;Garbanzo 500g;Granos y cereales;Barranquilla;12;Cancelado;Caja x 24
+2024-03-27;CLI-035;GRA-056;Lenteja 500g;Granos y cereales;Medellín;24;Entregado;Display x 6
+2025-12-01;CLI-008;VEG-067;Fríjol cargamanto 400g;Vegetales enlatados;Medellín;24;Entregado;Caja x 12
+2024-04-06;CLI-023;SAL-012;Ají picante 150g;Salsas y aderezos;Cali;12;Cancelado;Caja x 24
+2024-05-13;CLI-036;GRA-062;Lenteja 500g;Granos y cereales;Barranquilla;24;Cancelado;Caja x 12
+2025-03-14;CLI-006;VEG-008;Arvejas verdes 300g;Vegetales enlatados;Barranquilla;120;Entregado;Caja x 24
+2025-11-01;CLI-002;DUL-057;Bocadillo veleño 400g;Dulces y mermeladas;Bogotá;60;Entregado;Display x 6
+2024-12-04;CLI-012;GRA-006;Avena en hojuelas;Granos y cereales;Barranquilla;240;Entregado;Display x 6
+2025-08-15;CLI-043;GRA-057;Avena en hojuelas;Granos y cereales;Pereira;12;Entregado;Unidad
+2026-02-20;CLI-029;SAL-069;Salsa de tomate 200g;Salsas y aderezos;Cali;0;Entregado;Display x 6
+2024-01-16;CLI-034;GRA-011;Garbanzo 500g;Granos y cereales;Pereira;18;Entregado;Caja x 24
+2024-11-13;CLI-025;VEG-065;Maíz dulce 300g;Vegetales enlatados;Bucaramanga;12;Pendiente;Caja x 24
+2024-09-14;CLI-003;PES-030;Sardinas en salsa de tomate;Conservas de pescado;Bogotá;6;Entregado;Caja x 24
+2025-05-21;CLI-036;DUL-070;Arequipe 250g;Dulces y mermeladas;Barranquilla;240;Cancelado;Caja x 24
+2025-10-13;CLI-011;SAL-015;Mostaza 250g;Salsas y aderezos;Barranquilla;12;Entregado;Unidad
+2025-12-17;CLI-043;GRA-005;Lenteja 500g;Granos y cereales;Pereira;6;Pendiente;Display x 6
+2024-01-12;CLI-040;GRA-055;Avena en hojuelas;Granos y cereales;Pereira;6;Pendiente;Unidad
+2024-12-10;CLI-042;SAL-054;Mostaza 250g;Salsas y aderezos;Bogotá;12;Entregado;Caja x 24
+2024-10-08;CLI-001;PES-052;Atún en aceite 170g;Conservas de pescado;Bucaramanga;12;Entregado;Caja x 24
+2024-06-12;CLI-044;SAL-035;Ají picante 150g;Salsas y aderezos;Barranquilla;12;Entregado;Unidad
+2025-08-05;CLI-008;VEG-021;Arvejas verdes 300g;Vegetales enlatados;Medellín;234;Entregado;Caja x 12
+2024-02-15;CLI-036;PES-007;Atún en agua 170g;Conservas de pescado;Barranquilla;120;Entregado;Unidad
+2025-11-14;CLI-012;VEG-026;Maíz dulce 300g;Vegetales enlatados;Barranquilla;60;Entregado;Caja x 24
+2026-03-04;CLI-022;SAL-040;Mostaza 250g;Salsas y aderezos;Barranquilla;0;Cancelado;Caja x 24
+2024-07-30;CLI-021;GRA-001;Garbanzo 500g;Granos y cereales;Pereira;6;Entregado;Caja x 12
+2025-04-23;CLI-003;SAL-043;Mostaza 250g;Salsas y aderezos;Bogotá;6;Entregado;Caja x 24
+2025-12-18;CLI-028;DUL-024;Mermelada de mora 300g;Dulces y mermeladas;Pereira;12;Pendiente;Caja x 12
+2025-07-01;CLI-009;VEG-052;Arvejas verdes 300g;Vegetales enlatados;Bogotá;12;Pendiente;Unidad
+2025-05-29;CLI-036;DUL-058;Arequipe 250g;Dulces y mermeladas;Barranquilla;48;Pendiente;Display x 6
+2025-03-27;CLI-008;DUL-056;Bocadillo veleño 400g;Dulces y mermeladas;Medellín;48;Entregado;Unidad
+2025-11-02;CLI-032;PES-034;Sardinas en salsa de tomate;Conservas de pescado;Bogotá;120;Pendiente;Caja x 24
+2025-08-02;CLI-029;GRA-012;Garbanzo 500g;Granos y cereales;Cali;120;Pendiente;Caja x 24
+2024-05-23;CLI-003;VEG-022;Arvejas verdes 300g;Vegetales enlatados;Bogotá;48;Entregado;Caja x 24
+2025-10-05;CLI-045;DUL-005;Mermelada de mora 300g;Dulces y mermeladas;Cali;12;Entregado;Unidad
+2024-12-11;CLI-012;SAL-046;Ají picante 150g;Salsas y aderezos;Barranquilla;6;Entregado;Caja x 12
+2025-01-10;CLI-041;GRA-047;Garbanzo 500g;Granos y cereales;Barranquilla;24;Entregado;Unidad
+2024-12-06;CLI-020;GRA-035;Garbanzo 500g;Granos y cereales;Bogotá;48;Entregado;Display x 6
+2025-02-07;CLI-037;PES-046;Atún en agua 170g;Conservas de pescado;Bogotá;12;Cancelado;Unidad
+2024-12-07;CLI-002;SAL-004;Mayonesa 380g;Salsas y aderezos;Bogotá;240;Entregado;Caja x 24
+2025-05-06;CLI-023;GRA-005;Lenteja 500g;Granos y cereales;Cali;48;Entregado;Display x 6
+2025-10-25;CLI-014;GRA-066;Avena en hojuelas;Granos y cereales;Cali;12;Cancelado;Caja x 12
+2026-03-18;CLI-008;GRA-033;Lenteja 500g;Granos y cereales;Medellín;0;Pendiente;Caja x 24
+2024-06-13;CLI-026;SAL-054;Mostaza 250g;Salsas y aderezos;Pereira;48;Pendiente;Caja x 24
+2025-09-29;CLI-001;GRA-038;Garbanzo 500g;Granos y cereales;Bucaramanga;96;Entregado;Unidad
+2024-03-07;CLI-011;GRA-010;Avena en hojuelas;Granos y cereales;Barranquilla;12;Entregado;Caja x 24
+2024-04-04;CLI-022;VEG-003;Fríjol cargamanto 400g;Vegetales enlatados;Barranquilla;12;Entregado;Unidad
+2025-07-03;CLI-011;SAL-040;Mostaza 250g;Salsas y aderezos;Barranquilla;24;Pendiente;Caja x 24
+2025-04-21;CLI-016;GRA-001;Garbanzo 500g;Granos y cereales;Barranquilla;18;Pendiente;Caja x 12
+2024-08-15;CLI-005;GRA-004;Avena en hojuelas;Granos y cereales;Bogotá;24;Entregado;Caja x 12
+2024-08-23;CLI-019;VEG-040;Maíz dulce 300g;Vegetales enlatados;Pereira;12;Entregado;Unidad
+2025-02-27;CLI-013;DUL-031;Arequipe 250g;Dulces y mermeladas;Medellín;6;Entregado;Unidad
+2024-05-23;CLI-002;VEG-056;Maíz dulce 300g;Vegetales enlatados;Bogotá;0;Cancelado;Display x 6
+2024-04-09;CLI-007;GRA-015;Avena en hojuelas;Granos y cereales;Bogotá;36;Entregado;Unidad
+2026-01-07;CLI-004;SAL-037;Mostaza 250g;Salsas y aderezos;Cali;60;Cancelado;Display x 6
+2025-06-22;CLI-039;PES-051;Atún en aceite 170g;Conservas de pescado;Bogotá;12;Entregado;Unidad
+2025-09-02;CLI-023;SAL-016;Mostaza 250g;Salsas y aderezos;Cali;0;Entregado;Unidad
+2024-08-28;CLI-013;PES-039;Atún lomitos 80g;Conservas de pescado;Medellín;60;Pendiente;Caja x 12
+2024-09-05;CLI-040;DUL-031;Arequipe 250g;Dulces y mermeladas;Pereira;120;Entregado;Unidad
+2024-02-22;CLI-037;VEG-032;Champiñones rebanados;Vegetales enlatados;Bogotá;60;Entregado;Caja x 24
+2026-02-19;CLI-027;SAL-065;Salsa de tomate 200g;Salsas y aderezos;Bucaramanga;48;Pendiente;Unidad
+2024-03-18;CLI-043;DUL-039;Arequipe 250g;Dulces y mermeladas;Pereira;24;Entregado;Display x 6
+2025-07-07;CLI-020;GRA-045;Garbanzo 500g;Granos y cereales;Bogotá;24;Cancelado;Display x 6
+2025-04-27;CLI-018;SAL-017;Mostaza 250g;Salsas y aderezos;Medellín;18;Entregado;Caja x 12
+2024-09-06;CLI-011;DUL-064;Mermelada de mora 300g;Dulces y mermeladas;Barranquilla;48;Pendiente;Caja x 12
+2025-09-26;CLI-030;PES-056;Atún lomitos 80g;Conservas de pescado;Bucaramanga;0;Cancelado;Caja x 24
+2026-03-03;CLI-015;SAL-050;Mayonesa 380g;Salsas y aderezos;Pereira;0;Entregado;Caja x 12
+2025-10-20;CLI-044;VEG-050;Champiñones rebanados;Vegetales enlatados;Barranquilla;12;Entregado;Display x 6
+2025-04-20;CLI-042;PES-063;Atún lomitos 80g;Conservas de pescado;Bogotá;6;Pendiente;Unidad
+2025-04-24;CLI-007;SAL-002;Mayonesa 380g;Salsas y aderezos;Bogotá;120;Entregado;Caja x 12
+2026-01-11;CLI-039;SAL-031;Ají picante 150g;Salsas y aderezos;Bogotá;60;Pendiente;Display x 6
+2024-01-29;CLI-014;VEG-051;Champiñones rebanados;Vegetales enlatados;Cali;6;Entregado;Display x 6
+2024-12-07;CLI-013;DUL-033;Bocadillo veleño 400g;Dulces y mermeladas;Medellín;48;Cancelado;Unidad
+2026-02-07;CLI-027;VEG-035;Maíz dulce 300g;Vegetales enlatados;Bucaramanga;24;Cancelado;Unidad
+2024-09-29;CLI-001;VEG-006;Fríjol cargamanto 400g;Vegetales enlatados;Bucaramanga;6;Entregado;Caja x 12
+2025-02-13;CLI-012;VEG-060;Fríjol cargamanto 400g;Vegetales enlatados;Barranquilla;18;Entregado;Caja x 12
+2025-12-07;CLI-028;SAL-068;Mayonesa 380g;Salsas y aderezos;Pereira;42;Pendiente;Caja x 12
+2024-09-20;CLI-012;PES-016;Sardinas en salsa de tomate;Conservas de pescado;Barranquilla;234;Pendiente;Caja x 12

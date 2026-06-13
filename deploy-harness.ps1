@@ -144,21 +144,46 @@ if ($Dev) {
 }
 
 # --- Copiar scripts del harness (Python u otros) ---
-# scripts/{NNN}_{nombre}/*.py → {destino}/{NNN}_{nombre}/
+# scripts/{NNN}_{nombre}/*           → {destino}/{NNN}_{nombre}/           (archivos primer nivel: README.md, pytest.ini)
+# scripts/{NNN}_{nombre}/pipeline/** → {destino}/{NNN}_{nombre}/pipeline/  (paquete de código, recursivo)
+# El Worker (intake-processor) solo necesita el paquete de código + pytest.ini (pythonpath=.);
+# NO se copia tests/ (los fixtures byte-sensibles no van al runtime) ni los artefactos de cachear
+# (__pycache__/, .pytest_cache/).
 
 $carpetaHarness    = "${Harness}_${prefijo}"
 $origenScripts     = Join-Path $PSScriptRoot "scripts\$carpetaHarness"
 $destinoHarness    = Join-Path $Destino $carpetaHarness
 $destinoTemplHarn  = Join-Path $destinoHarness 'templates'
 
+# Subdirectorios que NO deben llegar al proyecto de prueba.
+$scriptsSubdirsExcluidos = @('tests', '.pytest_cache', '__pycache__')
+
 $scriptsCargados = @()
 
 if (Test-Path $origenScripts) {
     New-Item -ItemType Directory -Force $destinoHarness | Out-Null
+
+    # Archivos de primer nivel (README.md, pytest.ini, …)
     $scriptsOrigen = Get-ChildItem "$origenScripts\*" -File -ErrorAction SilentlyContinue
     foreach ($f in $scriptsOrigen) {
         Copy-Item $f.FullName -Destination $destinoHarness -Force
         $scriptsCargados += $f.Name
+    }
+
+    # Subdirectorios de código (pipeline/, …) — copia recursiva, excluyendo tests/ y cachés.
+    $scriptsSubdirs = Get-ChildItem $origenScripts -Directory -ErrorAction SilentlyContinue |
+        Where-Object { $_.Name -notin $scriptsSubdirsExcluidos }
+    foreach ($d in $scriptsSubdirs) {
+        $destinoSubdir = Join-Path $destinoHarness $d.Name
+        # Reemplazar limpio: si quedó una copia previa, eliminarla antes de recopiar.
+        if (Test-Path $destinoSubdir) { Remove-Item $destinoSubdir -Recurse -Force }
+        Copy-Item $d.FullName -Destination $destinoHarness -Recurse -Force
+        # Podar artefactos de caché que pudieran haberse copiado dentro del subdir.
+        Get-ChildItem $destinoSubdir -Directory -Recurse -Force -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -eq '__pycache__' -or $_.Name -eq '.pytest_cache' } |
+            ForEach-Object { Remove-Item $_.FullName -Recurse -Force -ErrorAction SilentlyContinue }
+        $nArchivos = (Get-ChildItem $destinoSubdir -File -Recurse -ErrorAction SilentlyContinue | Measure-Object).Count
+        $scriptsCargados += "$($d.Name)\ ($nArchivos archivos)"
     }
 }
 
