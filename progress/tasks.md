@@ -35,7 +35,24 @@ Sigue `plan/015_intake.md`. Esta tabla es el estado autoritativo de avance de la
 | 13 | Agentes A/B/C+Worker | `.claude/agents/intake-{governor,orchestrator,processor,evaluator}.md` — 4 agentes, modelo conductor (DEC-051), frontmatter válido + skills verificadas | `implementada` |
 | 14 | Conocimiento inicial | `templates/015_intake/{decisions_library,lessons_learned}_template.md` (plantillas curadas, deployadas a `015_intake/templates/`; el governor E10-A.8 las copia a `610_knowledge/` en runtime) | `implementada` |
 | 15 | Early-eval (E9, gate ≥ 0.7) | `scripts/015_intake/tests/EARLY_EVAL.md` — C aplica `intake-rubric` sobre los fixtures + verificación independiente del camino feliz (SHA-256 recalculado, bit-exactitud, evento). **Score 1.00, APPROVED.** Bug de higiene corregido (`.gitattributes` contado como fixture). El registro en `execution-state.json.early_eval` es runtime | `implementada` |
-| 16 | Smoke test / corrida e2e | en `Test_Forecaster/Test_NNN/` (terminal de prueba) | `no iniciada` ⬅ **SIGUIENTE** |
+| 16 | Smoke test / corrida e2e | en `Test_Forecaster/Test_NNN/` (terminal de prueba) — **bloqueado por T-185** (el deploy no copia `pipeline/`) | `no iniciada` |
+
+> **Estado del 015:** los PASOS 1–15 están **implementados** (85 tests verdes, early-eval APPROVED 1.00). Solo falta el PASO 16 (corrida e2e en la terminal de prueba), que **depende del rediseño de despliegue de abajo** — sin el fix de `pipeline/` (T-185) el `intake-processor` no encuentra el código en el proyecto de prueba.
+
+---
+
+## ⭐ SIGUIENTE PASO REAL — Rediseño de despliegue: carga perezosa por harness (DEC-058)
+
+Acordado en la sesión 42. Cambia el despliegue de "instalar los 11 harnesses de una vez" a **just-in-time por fase** con modelo **"switch"** (instalar el nuevo + podar el previo). Reduce el contexto del sistema (Claude Code carga la descripción de cada agente/skill al iniciar sesión). **El subconjunto T-185 es prerrequisito del PASO 16 del 015.** Detalle completo en **DEC-058**.
+
+| ID | Tarea | Estado |
+|---|---|---|
+| **T-185** | **`deploy-harness.ps1` — copia recursiva de `scripts/{NNN}_{prefijo}/pipeline/`.** Hoy `deploy-harness.ps1:158` (`Get-ChildItem "$origenScripts\*" -File`) solo copia archivos de primer nivel (`README.md`, `pytest.ini`), dejando fuera el paquete `pipeline/` que el `intake-processor` necesita. **Prerrequisito ineludible del PASO 16.** Verificar también que copia `tests/` solo si se decide (el Worker no lo necesita; basta `pipeline/`). | `no iniciada` ⬅ **EMPEZAR AQUÍ** |
+| **T-186** | **`deploy-harness.ps1` — modelo "switch": podar el harness previo.** Añadir parámetro/lógica para remover los `{prefijo_previo}-*` agentes y skills al desplegar el nuevo (ya existe lógica de borrado de `{prefijo}-*` antes de copiar — extenderla al harness anterior). El handoff persiste en disco, así que es seguro. Respetar el matiz de DEC-058: no podar harnesses transversales (045/050/055) cuando se definan. | `no iniciada` |
+| **T-187** | **`deploy-harness.ps1` — mapa "harness actual → siguiente".** Codificar la cadena (DEC-026 + pipeline `015→{020‖025}→030→035→040`). El fan-out 020‖025 es el único punto con dos siguientes — ofrecer ambos. | `no iniciada` |
+| **T-188** | **`faro-setup.ps1` — instalar solo el harness de arranque (010).** Quitar la copia indiscriminada de todos los agentes/skills; conservar el andamiaje (CLAUDE.md, settings, commands, workflows, `800_inputs/brief.md`, `FARO_HOME`) y **delegar agentes/skills/scripts a `deploy-harness.ps1 -Harness 010`**. | `no iniciada` |
+| **T-189** | **Crear `commands/faro-run.md` — comando conductor genérico (Opción B).** Detecta el **único** `*-governor.md` instalado y lo conduce (arranque `MODO: INIT` o continuación, según el estado que lee el governor). Reemplaza `/faro-discovery`, `/faro-intake`, etc. Reusar el patrón de `commands/faro-discovery.md` (verificar governor → cargar `conductor_loop.md` → spawnear governor). Deprecar `/faro-discovery` (lo absorbe `/faro-run`). | `no iniciada` |
+| **T-190** | **Ajustar el cierre del `discovery-governor.md` (y patrón para todo governor) para ofrecer el salto.** Al `PHASE_COMPLETE`, señalar "siguiente harness disponible: {N}"; el conductor pregunta *"¿despliego el {N}?"* y con el "sí" ejecuta `& "$env:FARO_HOME\deploy-harness.ps1" -Harness {N} -Destino .` (+ poda), luego instruye **reiniciar Claude Code** y correr `/faro-run`. La transición vive en el `conductor_loop.md` (la ejecuta la sesión principal, no el governor — DEC-051). | `no iniciada` |
 
 ---
 
@@ -114,5 +131,5 @@ Detectados en las corridas e2e. Ninguno impide avanzar al 015 (Test_006 dio APPR
 
 - Cada tarea es lo más atómica posible — una sola responsabilidad.
 - Al iniciar una tarea: cambiar estado a `en ejecución`. Al completarla: `implementada`.
-- Nuevas tareas se agregan con ID correlativo (el último usado es **T-184**; T-070 es el siguiente bloque de construcción del 015).
+- Nuevas tareas se agregan con ID correlativo (el último usado es **T-190**; T-070 es el bloque de construcción del 015, T-185..T-190 el rediseño de despliegue DEC-058).
 - El detalle histórico de cualquier tarea ya implementada del 010 está en `progress/history/tasks_harness010.md`.
