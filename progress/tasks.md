@@ -33,8 +33,8 @@ Sigue `plan/015_intake.md`. Esta tabla es el estado autoritativo de avance de la
 | 11 | `pipeline.py` (orquestación P1→P8 + P8 evento) + test integración | `pipeline/pipeline.py` + `tests/test_pipeline.py` — 9 tests verdes; `run_intake(client_config, snapshot_path, Persistence)`; gates P1 (vacío/corrupto→WORKER_FAILED, ambiguo→PENDING_OPERATOR_INPUT) y P2 (REJECTED_STRUCTURE, sin Bronce ni evento); evento como ÚLTIMO artefacto; idempotencia de recuperación; esquema2 EXPECTED_NOT_RECEIVED no bloquea | `implementada` |
 | 12 | ~20 fixtures (E9) con expectativas | `scripts/015_intake/tests/fixtures/` (20 archivos) + `_build_fixtures.py` (generador reproducible) + README con expectativa por fixture + `tests/test_fixtures.py` (18 tests verdes) | `implementada` |
 | 13 | Agentes A/B/C+Worker | `.claude/agents/intake-{governor,orchestrator,processor,evaluator}.md` — 4 agentes, modelo conductor (DEC-051), frontmatter válido + skills verificadas | `implementada` |
-| 14 | Conocimiento inicial | `610_knowledge/{decisions_library,lessons_learned}.md` (runtime — plantillar o crear en corrida) | `no iniciada` ⬅ **SIGUIENTE** |
-| 15 | Early-eval (E9, gate ≥ 0.7) | registro en `execution-state.json.early_eval` (runtime) | `no iniciada` |
+| 14 | Conocimiento inicial | `templates/015_intake/{decisions_library,lessons_learned}_template.md` (plantillas curadas, deployadas a `015_intake/templates/`; el governor E10-A.8 las copia a `610_knowledge/` en runtime) | `implementada` |
+| 15 | Early-eval (E9, gate ≥ 0.7) | registro en `execution-state.json.early_eval` (runtime) | `no iniciada` ⬅ **SIGUIENTE** |
 | 16 | Smoke test / corrida e2e | en `Test_Forecaster/Test_NNN/` (terminal de prueba) | `no iniciada` |
 
 ---

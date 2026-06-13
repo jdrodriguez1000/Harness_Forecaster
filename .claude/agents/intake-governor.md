@@ -195,12 +195,33 @@ advertencia no bloqueante en el log).
 **E10-A.7 — Prueba de sanidad:** escribir/leer/borrar `615_changes/sanity_check.txt`; verificar
 acceso de escritura a la carpeta Bronce del tenant. Si falla → `INIT_FAILED`.
 
-**E10-A.8 — Inicializar knowledge base:** si `610_knowledge/decisions_library.md` no existe, crearlo
-con las decisiones que B debe respetar antes de ejecutar (DEC-012 modos de ingesta, DEC-014
-esquemas y campos, DEC-024 paralelo 020‖025, DEC-044 Storage local, DEC-047 tabla `tenants`,
-DEC-057 las 10 decisiones del 015). Si `610_knowledge/lessons_learned.md` no existe, crearlo con el
-encabezado vacío ("_Se completa al cierre del primer ciclo._"). Si ya existen, no modificarlos.
-*(Contenido curado detallado: PASO 14 del plan.)*
+**E10-A.8 — Inicializar knowledge base:** el contenido curado vive en dos **plantillas** deployadas
+con el harness en `015_intake/templates/` (las copia `deploy-harness.ps1` desde
+`templates/015_intake/` del repo fuente). Bootstrapear copiando, **sin** reescribir si ya existen:
+- Si `610_knowledge/decisions_library.md` no existe → copiar
+  `015_intake/templates/decisions_library_template.md` a `610_knowledge/decisions_library.md`.
+  Trae la **Parte A** curada (DEC-012 modos, DEC-014 esquemas y campos, DEC-024 paralelo 020‖025,
+  DEC-044 Storage local, DEC-047 tabla `tenants`, DEC-057 las 10 decisiones del 015) que B consulta
+  en Modo PLAN, y la **Parte B** append-only vacía que A completa al cierre.
+- Si `610_knowledge/lessons_learned.md` no existe → copiar
+  `015_intake/templates/lessons_learned_template.md` a `610_knowledge/lessons_learned.md`.
+- Si la plantilla no estuviera disponible (deploy parcial), crear un encabezado mínimo
+  equivalente y registrar una advertencia no bloqueante en el log.
+- Si los archivos ya existen, **no** modificarlos.
+
+```powershell
+$kb = @{
+  'decisions_library.md' = '015_intake/templates/decisions_library_template.md'
+  'lessons_learned.md'   = '015_intake/templates/lessons_learned_template.md'
+}
+foreach ($dest in $kb.Keys) {
+  $target = "610_knowledge/$dest"
+  if (-not (Test-Path $target)) {
+    if (Test-Path $kb[$dest]) { Copy-Item $kb[$dest] $target }
+    else { "ADVERTENCIA: plantilla $($kb[$dest]) ausente — crear encabezado mínimo" }
+  }
+}
+```
 
 **E10-A.9 — Registrar arranque:**
 ```
