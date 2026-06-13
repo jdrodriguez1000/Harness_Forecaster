@@ -78,6 +78,7 @@ Cada lección incluye el contexto en que surgió y cómo aplicarla.
 | LEC-065 | Un APPROVED no audita la calibración ni la riqueza semántica | Fundacional (metodología) |
 | LEC-066 | Los timestamps redactados por el agente no son reloj de ejecución | Fundacional (liga T-180) |
 | LEC-067 | El plan heredado mezcla carpetas runtime con artefactos del repo fuente | Fundacional (construcción de harnesses) |
+| LEC-068 | En TDD, una aserción mal calculada a mano se disfraza de bug del módulo | Fundacional (construcción 015, TDD) |
 
 ---
 
@@ -552,3 +553,10 @@ Cada lección incluye el contexto en que surgió y cómo aplicarla.
 **Contexto:** Al definir la política de retención de datos al cancelar surgió el caso borde de solicitudes de exportación recibidas en el último mes permitido.
 **Lección:** El proceso de eliminación definitiva debe verificar si hay exportaciones pendientes de confirmación antes de ejecutarse. Si las hay, el proceso se bloquea hasta recibir confirmación de entrega.
 **Cómo aplicar:** Implementar el job de eliminación con una verificación previa del estado de exportaciones del cliente. Solo eliminar si el estado es "sin exportaciones pendientes" o "exportación confirmada entregada".
+
+---
+
+## LEC-068 — En TDD, una aserción mal calculada a mano se disfraza de bug del módulo (sesión 40)
+**Contexto:** Construyendo los módulos del 015 con TDD real, dos tests fallaron en GREEN no por el código sino por la **aserción**: (1) en `range_evaluator`, calculé "a ojo" que de 2022-01-01 a 2024-02-06 había 767 días — son 766; (2) en `report_builder`, la ruta a `templates/` usaba `parents[2]` (apunta a `scripts/`) cuando la raíz del repo es `parents[3]`. En ambos casos el módulo era correcto; el test mentía. Es tentador "arreglar" el módulo para que pase un test equivocado — eso habría inyectado un bug real.
+**Lección:** En un fallo RED→GREEN, antes de tocar la implementación, verificar que la aserción es correcta. Los valores esperados calculados a mano (rangos de fechas, conteos, off-by-one, rutas relativas con `parents[N]`) son una fuente frecuente de falsos negativos. Si el valor producido por el módulo es defendible y el esperado fue un cálculo humano, sospechar primero del test. Preferir expectativas derivadas programáticamente o dobles-chequeadas a constantes mágicas tecleadas.
+**Cómo aplicar:** Al escribir tests con expectativas numéricas/temporales en los PASOS restantes del 015 (y futuros harnesses con TDD): (a) para spans de fecha, computar el esperado con `(date_max - date_min).days` en el propio test o verificarlo aparte; (b) para rutas, anclar con `Path(__file__).resolve().parents[N]` contando los niveles reales (`tests`→`015_intake`→`scripts`→raíz = 3); (c) ante un GREEN que falla, leer el valor real reportado y juzgar cuál de los dos (módulo o aserción) es el equivocado, no asumir que es el módulo.

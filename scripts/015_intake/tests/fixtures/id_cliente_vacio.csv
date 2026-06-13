@@ -1,0 +1,4 @@
+fecha_pedido;id_cliente;id_producto;cantidad_solicitada
+2024-01-01;;P1;1
+2024-01-02;C2;P2;2
+2024-01-03;   ;P3;3

@@ -23,16 +23,16 @@ Sigue `plan/015_intake.md`. Esta tabla es el estado autoritativo de avance de la
 | 1 | Andamiaje de carpetas | `scripts/015_intake/{pipeline,tests/fixtures}/` + `templates/015_intake/schemas/` (README + `__init__.py`); entorno verificado (`xlrd` instalado) | `implementada` |
 | 2 | Archivos de estado | **Absorbido en PASO 3e** — son runtime (los crea E10-A); estructura en `intake-state-schema` | `implementada` |
 | 3 | Schemas + skills (contratos) | 3 JSON en `templates/015_intake/schemas/` + 5 skills `.claude/skills/intake-*` | `implementada` |
-| 4 | `source_adapter.py` (P1 recepción) + test | `scripts/015_intake/pipeline/source_adapter.py` + `tests/test_source_adapter.py` | `no iniciada` ⬅ **SIGUIENTE** |
-| 5 | `format_detector.py` (P1 CSV delim/encoding, Excel hoja/cabecera) + test | `pipeline/format_detector.py` + test (canario acentos cp1252) | `no iniciada` |
-| 6 | `schema_validator.py` (P2 GATE, veto D2) + test | `pipeline/schema_validator.py` + test | `no iniciada` |
-| 7 | `type_validator.py` (P3) + `range_evaluator.py` (P5) + tests | `pipeline/{type_validator,range_evaluator}.py` + tests | `no iniciada` |
-| 8 | `deduplicator.py` (P4 batch/incremental) + test | `pipeline/deduplicator.py` + test | `no iniciada` |
-| 9 | `bronze_writer.py` (P6 write-once + SHA-256 + manifest, veto D5) + test | `pipeline/bronze_writer.py` + test | `no iniciada` |
-| 10 | `report_builder.py` (P7 intake_report + intake_log) + test | `pipeline/report_builder.py` + test | `no iniciada` |
-| 11 | `pipeline.py` (orquestación P1→P8 + P8 evento) + test integración | `pipeline/pipeline.py` + `tests/test_pipeline.py` | `no iniciada` |
-| 12 | ~20 fixtures (E9) con expectativas | `scripts/015_intake/tests/fixtures/` + README | `no iniciada` |
-| 13 | Agentes A/B/C+Worker | `.claude/agents/intake-{governor,orchestrator,processor,evaluator}.md` | `no iniciada` |
+| 4 | `source_adapter.py` (P1 recepción) + test | `scripts/015_intake/pipeline/source_adapter.py` + `tests/test_source_adapter.py` (7 tests verdes) + `pytest.ini` | `implementada` |
+| 5 | `format_detector.py` (P1 CSV delim/encoding, Excel hoja/cabecera) + test | `pipeline/format_detector.py` + test (canario acentos cp1252) — 11 tests verdes; `_detect_encoding`/`_detect_delimiter` puras (REFACTOR) | `implementada` |
+| 6 | `schema_validator.py` (P2 GATE, veto D2) + test | `pipeline/schema_validator.py` + test — 9 tests verdes; matching normalizado (acentos/sinónimos), igualdad canónica sin substring (D2: FP=FN=0) | `implementada` |
+| 7 | `type_validator.py` (P3) + `range_evaluator.py` (P5) + tests | `pipeline/{type_validator,range_evaluator}.py` + tests — 11 tests verdes; cuentan errores/rango sin detener (D3); `parse_fecha`/`_a_numero` puras | `implementada` |
+| 8 | `deduplicator.py` (P4 batch/incremental) + test | `pipeline/deduplicator.py` + test — 5 tests verdes; clave compuesta normalizada, batch cuenta/no elimina, incremental excluye vía unión lógica del manifest (relee Bronce cp1252) | `implementada` |
+| 9 | `bronze_writer.py` (P6 write-once + SHA-256 + manifest, veto D5) + test | `pipeline/bronze_writer.py` + test — 8 tests verdes; bit-exacto desde bytes del snapshot, SHA-256 en manifest, write-once idempotente + `BronzeImmutabilityError`, append por entrega | `implementada` |
+| 10 | `report_builder.py` (P7 intake_report + intake_log) + test | `pipeline/report_builder.py` + test — 7 tests verdes; consolida P1–P6, warning de rango en `rango_declarado_vs_real` + `warnings`, `files` JSONB por archivo, conforme a schemas del PASO 3 | `implementada` |
+| 11 | `pipeline.py` (orquestación P1→P8 + P8 evento) + test integración | `pipeline/pipeline.py` + `tests/test_pipeline.py` — 9 tests verdes; `run_intake(client_config, snapshot_path, Persistence)`; gates P1 (vacío/corrupto→WORKER_FAILED, ambiguo→PENDING_OPERATOR_INPUT) y P2 (REJECTED_STRUCTURE, sin Bronce ni evento); evento como ÚLTIMO artefacto; idempotencia de recuperación; esquema2 EXPECTED_NOT_RECEIVED no bloquea | `implementada` |
+| 12 | ~20 fixtures (E9) con expectativas | `scripts/015_intake/tests/fixtures/` (20 archivos) + `_build_fixtures.py` (generador reproducible) + README con expectativa por fixture + `tests/test_fixtures.py` (18 tests verdes) | `implementada` |
+| 13 | Agentes A/B/C+Worker | `.claude/agents/intake-{governor,orchestrator,processor,evaluator}.md` | `no iniciada` ⬅ **SIGUIENTE** |
 | 14 | Conocimiento inicial | `610_knowledge/{decisions_library,lessons_learned}.md` (runtime — plantillar o crear en corrida) | `no iniciada` |
 | 15 | Early-eval (E9, gate ≥ 0.7) | registro en `execution-state.json.early_eval` (runtime) | `no iniciada` |
 | 16 | Smoke test / corrida e2e | en `Test_Forecaster/Test_NNN/` (terminal de prueba) | `no iniciada` |
@@ -102,11 +102,17 @@ Detectados en las corridas e2e. Ninguno impide avanzar al 015 (Test_006 dio APPR
 | T-179 | Añadir campo estructurado de **tolerancia de error asimétrica** (`prioridad_precision` / `segmentos_criticos`: dónde el MAPE debe ser más bajo) al schema del synthesizer/`session_data` y propagarlo en el configurator. Hoy se pierde al comprimir `criterios_exito`. Alimenta 035 Predictor / 045 Monitor. | `no iniciada` |
 | T-180 | Anclar los timestamps internos de `session_notes.json` al reloj real de ejecución (el interviewer los redacta narrados, no con `Get-Date` real). Higiene de datos menor. | `no iniciada` |
 
+## Ajustes menores del harness 015 — diferidos, NO bloqueantes
+
+| ID | Tarea | Estado |
+|---|---|---|
+| T-184 | **`type_validator` (P3) no cuenta celdas numéricas vacías como error de tipo.** `_a_numero` recibe `NaN` (float, lo produce pandas para una celda vacía) y lo trata como número válido (`nan < 0` es `False`), así que un `cantidad_solicitada` vacío NO se contabiliza. En CSVs reales las celdas vacías son comunes → el conteo de errores de tipo que alimenta el ISD del 020 puede quedar subestimado. Fix: en `_a_numero` o en el conteo `num_nonneg`, tratar `NaN`/vacío como error. Requiere su propio test. Detectado en el PASO 12 (fixture `cantidad_negativa.csv`). NO bloqueante (no afecta Bronce ni vetos). | `no iniciada` |
+
 ---
 
 ## Convenciones
 
 - Cada tarea es lo más atómica posible — una sola responsabilidad.
 - Al iniciar una tarea: cambiar estado a `en ejecución`. Al completarla: `implementada`.
-- Nuevas tareas se agregan con ID correlativo (el último usado es **T-183**; T-070 es el siguiente bloque de construcción del 015).
+- Nuevas tareas se agregan con ID correlativo (el último usado es **T-184**; T-070 es el siguiente bloque de construcción del 015).
 - El detalle histórico de cualquier tarea ya implementada del 010 está en `progress/history/tasks_harness010.md`.

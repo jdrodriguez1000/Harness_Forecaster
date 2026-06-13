@@ -1,0 +1,3 @@
+fecha_pedido;id_cliente;id_producto;cantidad_solicitada;fecha_entrega_solicitada;estado_pedido;ciudad;columna_extra
+2024-01-01;C1;P1;5;2024-01-05;entregado;Bogotá;x
+2024-06-01;C2;P2;3;2024-06-04;pendiente;Medellín;y

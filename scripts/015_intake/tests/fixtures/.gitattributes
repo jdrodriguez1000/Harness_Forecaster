@@ -1,0 +1,6 @@
+# Los fixtures son byte-sensibles (Bronce bit-exacto + canario cp1252): Git NUNCA
+# debe normalizar saltos de línea ni encoding sobre ellos.
+*.csv -text
+*.bin -text
+*.xlsx -text
+*.xls -text

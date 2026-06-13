@@ -1,13 +1,13 @@
 # Estado del Proyecto — FARO (Harness Forecaster)
 
 ## Última actualización
-2026-06-13 (sesión 39)
+2026-06-13 (sesión 41)
 
 ---
 
 ## LEER PRIMERO — estado en una frase
 
-**El harness 010 Discovery está TERMINADO. La CONSTRUCCIÓN del harness 015 Intake (T-070) está EN CURSO siguiendo `plan/015_intake.md` (16 pasos). Ya están hechos el PASO 1 (andamiaje de carpetas en el repo fuente), el PASO 2 (absorbido en la skill `intake-state-schema`) y el PASO 3 (los 5 contratos: schemas + skills). El SIGUIENTE PASO es el PASO 4 — empezar los módulos del pipeline con TDD real (`source_adapter`, luego `format_detector`…). El detalle paso a paso y su estado vive en `tasks.md` (bloque "Construcción del 015 — desglose por PASO").**
+**El harness 010 Discovery está TERMINADO. La CONSTRUCCIÓN del harness 015 Intake (T-070) está EN CURSO siguiendo `plan/015_intake.md` (16 pasos). Hechos: PASOS 1–3 (andamiaje, estado, 5 contratos) y módulos PASO 4 (`source_adapter`), 5 (`format_detector`, canario cp1252), 6 (`schema_validator`, GATE veto D2), 7 (`type_validator` P3 + `range_evaluator` P5), 8 (`deduplicator` P4), 9 (`bronze_writer` P6, veto D5), 10 (`report_builder` P7), 11 (`pipeline.py` — orquestación P1→P8 con `run_intake`, evento como ÚLTIMO artefacto) y 12 (batería de 20 fixtures E9 + `test_fixtures.py`) con TDD real — 85 tests verdes (`pytest -q`). El SIGUIENTE PASO es el PASO 13 — definiciones de los 4 agentes (`intake-governor/orchestrator/processor/evaluator`) replicando el modelo conductor del 010. El detalle paso a paso y su estado vive en `tasks.md` (bloque "Construcción del 015 — desglose por PASO").**
 
 ---
 
@@ -34,12 +34,58 @@ Captura el contexto del cliente (entrevistas multi-stakeholder), calcula el ITO 
 
 **El plan de construcción está escrito** (`plan/015_intake.md`, T-183 implementada) — 16 pasos, derivado de `brief/015_intake.md`. La construcción se ejecuta paso a paso. **Estado por paso, autoritativo, en `tasks.md`** (bloque "Construcción del 015 — desglose por PASO").
 
-**Hecho hasta ahora (sesión 39):**
+**Hecho hasta ahora (sesiones 39–40):**
 - **PASO 1 ✅** — Andamiaje en el **repo fuente** (no carpetas runtime): `scripts/015_intake/{pipeline,tests/fixtures}/` (con `README.md` y `pipeline/__init__.py`) y `templates/015_intake/schemas/`. Entorno verificado: Python 3.12.10 + pandas/openpyxl/chardet/pytest; `xlrd` instalado (2.0.2, solo `.xls`).
 - **PASO 2 ✅ (absorbido)** — Los archivos de estado son **runtime** (los crea E10-A en la terminal de prueba); su estructura quedó documentada en la skill `intake-state-schema`, no como archivos en el repo fuente.
 - **PASO 3 ✅** — Los **5 contratos de referencia**: 3 JSON-schema en `templates/015_intake/schemas/` (`intake_report_schema.json`, `manifest_schema.json`, `intake_log_schema.json`) + 5 skills en `.claude/skills/` (`intake-report-schema`, `intake-manifest-schema`, `intake-log-schema`, `intake-rubric`, `intake-state-schema`).
 
-**SIGUIENTE PASO → PASO 4** — Empezar los **módulos del pipeline con TDD real** (RED→GREEN→REFACTOR), en orden: `source_adapter` (P1) → `format_detector` (P1, el del encoding/delimitador — "canario" de los acentos cp1252) → `schema_validator` (P2, veto D2) → `type_validator`+`range_evaluator` (P3/P5) → `deduplicator` (P4) → `bronze_writer` (P6, veto D5) → `report_builder` (P7) → `pipeline.py` (orquestación P1→P8 + evento). Todos en `scripts/015_intake/pipeline/`, tests en `scripts/015_intake/tests/`. Ver PASOS 4–11 del plan.
+- **PASO 4 ✅** — `source_adapter.py` (P1 recepción): `ManualOperatorAdapter.read_snapshot(path) -> Snapshot(raw_bytes, formato_declarado, source_metadata, vacio)`; interfaz `SourceAdapter` (ABC) documenta conectores futuros sin construirlos; `SourceNotFound`. 7 tests + `pytest.ini` (`pythonpath = .`).
+- **PASO 5 ✅** — `format_detector.py` (P1 detección): `detect_format(raw_bytes, filename, huella=None) -> FormatSpec`. Tipo por magic bytes (zip→xlsx, OLE2→xls), encoding por cascada estricta (utf-8/utf-8-sig/cp1252/latin-1 — **el canario cp1252 sobrevive byte-a-byte**), delimitador por consistencia de columnas, hoja/fila-cabecera Excel; `ambiguo=True` escala al operador, `corrupto=True` (byte nulo) rechaza, `huella` se respeta sin re-detectar. 11 tests verdes.
+- **PASO 6 ✅** — `schema_validator.py` (P2 GATE, veto D2): `validate_structure(df, esquema) -> StructureResult`. Mínimos Esquema 1 (4) / Esquema 2 (6) + 17 ideales del Esquema 1 (DEC-014). Matching normalizado (trim/acentos/espacios→'_') + sinónimos curados; igualdad por nombre canónico, **nunca substring** (D2: falso positivo = falso negativo = 0). Rechaza ⟺ falta un mínimo; ideales faltantes = déficit que no rechaza. 9 tests verdes.
+- **PASO 7 ✅** — `type_validator.py` (P3): `validate_types(df, esquema) -> TypeResult` cuenta errores por campo (fecha no parseable, texto vacío, num<0/no-numérico) sin filtrar filas (D3); expone `parse_fecha`/`_a_numero`/`_resolver_columna`. `range_evaluator.py` (P5): `evaluate_range(df, anios_declarados, campo_fecha) -> RangeResult` calcula fecha_min/max, días, años reales; discrepancia > 20% vs declarado → `warning=True`; ignora fechas no parseables. 11 tests verdes.
+- **PASO 8 ✅** — `deduplicator.py` (P4): clave compuesta `(fecha_pedido, id_cliente, id_producto)` normalizada a string. `count_internal_duplicates(df)` (batch) cuenta sin eliminar; `diff_against_bronze(df, manifest_path) -> (df_nuevos, n_excluidos)` (incremental) excluye lo ya presente leyendo la unión lógica del Bronce vía `_manifest.json` (relee archivos previos cp1252 con el detector). 5 tests verdes.
+- **PASO 9 ✅** — `bronze_writer.py` (P6, **veto D5**): `write_bronze(raw_bytes, bronze_dir, mode, delivery_id, esquema, …) -> BronzeFile`. Escribe los **bytes del snapshot** (bit-exacto, no re-serializa el DataFrame); nombre `orders_/inventory_{mode}_{delivery_id}.{ext}`; SHA-256 en `_manifest.json`; **write-once** idempotente (mismo hash → no reescribe, `rewritten=False`) y `BronzeImmutabilityError` si el nombre existe con hash distinto; incremental = un archivo por entrega + append a `entregas` (manifest no se duplica). 8 tests verdes.
+- **PASO 10 ✅** — `report_builder.py` (P7): `build_report(...) -> intake_report` (formato, conteos, errores de tipo, duplicados, rango, campos ideales faltantes; warning de rango duplicado en `rango_declarado_vs_real` + lista `warnings`) y `build_intake_log(...) -> fila intake_log` (`files` JSONB con path+sha256+rows+date_range por archivo, `_pendiente_supabase: true`). Conforme a los schemas del PASO 3. 7 tests verdes.
+- **PASO 11 ✅** — `pipeline.py` (orquestación P1→P8): `run_intake(client_config, snapshot_path, Persistence) -> IntakeResult`. Encadena los módulos en orden estricto. Gates: P1 vacío/corrupto → `WORKER_FAILED` (+`intake_rejection.json`), P1 ambiguo (Excel multi-hoja sin huella) → `PENDING_OPERATOR_INPUT` (escalamiento, sin Bronce), P2 falta mínimo → `REJECTED_STRUCTURE` (+`intake_rejection.json`, **sin Bronce ni evento**). P3/P4/P5 cuentan sin detener; P6 Bronce bit-exacto desde los **bytes del snapshot**; P7 report+intake_log; **P8 evento `intake_complete` como ÚLTIMO artefacto** (atomicidad: si el report falla, no hay evento). Idempotencia de recuperación (re-correr no reescribe Bronce). Esquema 2 ausente → `EXPECTED_NOT_RECEIVED`, no bloquea. 9 tests verdes. **Decisión de reconciliación:** el brief P4 dice "en incremental solo los nuevos se persisten", pero D5 (Bronce bit-exacto) es veto duro → se mantiene la bit-exactitud y `diff_against_bronze` se usa **solo para el conteo** `vs_bronce_previo`; la deduplicación lógica del histórico vive en el manifest (documentado en el docstring de `pipeline.py`).
+- **PASO 12 ✅** — Batería de 20 fixtures (E9) en `scripts/015_intake/tests/fixtures/` (generador reproducible `_build_fixtures.py` + `README.md` con la expectativa por fixture) y `tests/test_fixtures.py` (18 tests). Cubre estructura (rechazo/ideales/cabecera fila 3), formato (`,`/`;`/`|`/utf-8-sig/cp1252-canario/xlsx/xls real vía xlwt build-time/multi-hoja→escala), tipos (negativas+no-numéricas, 3 formatos de fecha, vacíos), duplicados (batch cuenta/no elimina; incremental excluye), rango (warning), Bronce (bit-exacto+idempotente) y corrupto/vacío (`WORKER_FAILED`). **Hallazgo diferido T-184:** `type_validator` no cuenta celdas numéricas vacías (`NaN`) como error de tipo — no bloqueante.
+
+**SIGUIENTE PASO → PASO 13** — Definiciones de los 4 agentes en `.claude/agents/intake-{governor,orchestrator,processor,evaluator}.md`, replicando el modelo conductor del 010 (DEC-051): governor/orchestrator de un solo paso emiten señales de despacho, la sesión principal (conductor) es la única que spawnea, workers livianos (el peso está en el código+tests ya construidos). Ver PASO 13 del plan y los agentes `discovery-*` como patrón. Después quedan los PASOS 14–16 (conocimiento inicial, early-eval E9, corrida e2e en terminal de prueba).
+
+---
+
+### Orientación al código del 015 (para una sesión nueva)
+
+**Dónde está todo:** `scripts/015_intake/` — `pipeline/` (módulos), `tests/` (pytest), `tests/fixtures/` (20 fixtures E9 + `_build_fixtures.py` + `README.md`), `pytest.ini` (`pythonpath = .`). Schemas de referencia en `templates/015_intake/schemas/`.
+
+**Cómo correr los tests** (desde `scripts/015_intake/`):
+```
+cd "scripts/015_intake" && python -m pytest -q
+```
+Estado actual: **85 tests verdes**. Entorno: Python 3.12.10 + pandas/openpyxl/xlrd/chardet/pytest (+ xlwt solo build-time para generar el fixture `.xls`).
+
+**Mapa P→módulo→función pública** (todos en `pipeline/`):
+
+| Proceso | Módulo | Entrada → Salida principal |
+|---|---|---|
+| P1 recepción | `source_adapter.py` | `ManualOperatorAdapter().read_snapshot(path) -> Snapshot(raw_bytes, formato_declarado, source_metadata, vacio)`; excepción `SourceNotFound` |
+| P1 detección | `format_detector.py` | `detect_format(raw_bytes, filename, huella=None) -> FormatSpec(tipo, encoding, delimitador, hoja, fila_cabecera, hojas_disponibles, ambiguo, corrupto, fuente)` |
+| P2 GATE | `schema_validator.py` | `validate_structure(df, esquema) -> StructureResult(aprobado, campos_minimos_*, campos_ideales_*, mapeo)`; constantes `MINIMOS_ESQUEMA1/2`, `IDEALES_ESQUEMA1`, helper `_canonico` |
+| P3 tipos | `type_validator.py` | `validate_types(df, esquema) -> TypeResult(errores:dict, filas_evaluadas)`; helpers puros `parse_fecha`, `_a_numero`, `_resolver_columna` |
+| P5 rango | `range_evaluator.py` | `evaluate_range(df, anios_declarados, campo_fecha="fecha_pedido") -> RangeResult(fecha_min/max, dias_cubiertos, anios_real, discrepancia_pct, warning)` |
+| P4 dedupe | `deduplicator.py` | `count_internal_duplicates(df) -> int`; `diff_against_bronze(df, manifest_path) -> (df_nuevos, n_excluidos)`; `keys_from_df`, `load_bronze_keys` |
+| P6 Bronce | `bronze_writer.py` | `write_bronze(raw_bytes, bronze_dir, mode, delivery_id, esquema, *, tenant_id, extension, rows, rango, timestamp) -> BronzeFile(path, archivo, sha256, rewritten, manifest_entry)`; excepción `BronzeImmutabilityError` |
+| P7 reportes | `report_builder.py` | `build_report(...) -> dict` (intake_report); `build_intake_log(*, bronze_files, ...) -> dict` |
+| P1–P8 orquestación | `pipeline.py` | `run_intake(client_config, snapshot_path, persistence) -> IntakeResult(estado, bronze_files, report, report_path, manifest_path, intake_log, event, event_path, rejection, escalation)`; `Persistence(bronze_dir, events_dir)`; estados `EXECUTION_COMPLETE`/`REJECTED_STRUCTURE`/`PENDING_OPERATOR_INPUT`/`WORKER_FAILED` |
+
+**Invariantes de código que el PASO 11 debe respetar** (no romper al integrar):
+- **Resolución de nombres canónica y compartida:** P2/P3/P4/P5 resuelven columnas vía `_canonico`/`_resolver_columna` (normaliza trim/acentos/espacios + sinónimos). Reusar, no reimplementar.
+- **Bronce bit-exacto desde los BYTES del snapshot**, nunca re-serializando el DataFrame (rompería D5). El DataFrame solo valida/cuenta.
+- **El evento es el ÚLTIMO artefacto (P8).** Si algo falla antes, no se emite `intake_complete`. Rechazo de estructura (P2) → `intake_rejection.json`, sin Bronce ni evento, estado `REJECTED_STRUCTURE`.
+- **Write-once idempotente:** re-correr con el mismo Bronce no reescribe (`rewritten=False`) → soporta recuperación CP-03↔CP-05.
+- **El canario cp1252** debe sobrevivir byte-a-byte de P1 a Bronce (si se corrompe el encoding, el dedupe miente).
+- **Fallback Fase 1:** lo que sería Supabase se escribe como JSON local con `_pendiente_supabase: true`; Storage Bronce en `1000_storage_local/tenants/{id}/1000_data/005_bronze/` (DEC-044).
+
+---
 
 > **Ajuste de plan importante (LEC-067):** el PASO 1 y el PASO 2 del plan heredaron de `plan/010_discovery.md` (escrito antes de LEC-053) una lista de carpetas **runtime** que NO van en el repo fuente. Se corrigió el plan: en el repo fuente solo vive lo que se construye (código en `scripts/015_intake/`, plantillas/schemas en `templates/015_intake/`, agentes/skills en `.claude/`); las carpetas `600_persistence/`, `605_eval/`, etc. las crea E10-A durante la corrida e2e en la terminal de prueba.
 
@@ -60,7 +106,7 @@ Captura el contexto del cliente (entrevistas multi-stakeholder), calcula el ITO 
 
 - **Idioma:** documentación en **español**; nombres de archivo en **inglés**, contenido en español.
 - **Arquitectura de dos terminales (LEC-053)** para pruebas e2e: la corrida vive en una carpeta de prueba dedicada (`Test_Forecaster/Test_NNN/`); esta carpeta `Harness_Forecaster` es el **repo fuente / soporte** (aplica fixes, audita artefactos). El diseño/construcción de un harness (escribir su brief) SÍ se hace en esta terminal.
-- **Dónde está cada cosa:** decisiones formales en `progress/decisions.md` (última: DEC-055); lecciones en `progress/lessons.md`; registro atómico de tareas en `progress/tasks.md`.
+- **Dónde está cada cosa:** decisiones formales en `progress/decisions.md` (última: DEC-057); lecciones en `progress/lessons.md` (última: LEC-068); registro atómico de tareas en `progress/tasks.md`.
 - **Historial completo del harness 010** (todo el detalle de las sesiones 1–37, hallazgos y fixes) archivado en **`progress/history/`** (`progress_harness010.md`, `tasks_harness010.md`, `refactor_conductor_T166.md`). Consultar ahí si se necesita el porqué de algún fix del 010.
 - **Repositorio GitHub:** `https://github.com/jdrodriguez1000/Harness_Forecaster.git` (rama `main`).
 
