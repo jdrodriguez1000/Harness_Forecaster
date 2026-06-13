@@ -5,6 +5,81 @@ Cada lección incluye el contexto en que surgió y cómo aplicarla.
 
 ---
 
+## Índice (catálogo)
+
+> Escanea esta tabla y abre solo la entrada que necesites (busca `## LEC-NNN`). **Alcance:** `Fundacional` = lección transversal (metodología, prompts, infra, patrones reutilizables en todos los harnesses); `H-010` = específica de la mecánica del harness 010. Las entradas no están en orden numérico estricto en el cuerpo — usa el buscador.
+
+| ID | Título | Alcance |
+|---|---|---|
+| LEC-001 | El modelo de negocio define la arquitectura, no al revés | Fundacional |
+| LEC-002 | Los SLAs de precisión deben vincularse a la calidad de los datos | Fundacional |
+| LEC-003 | La unidad de análisis es cliente × producto | Fundacional |
+| LEC-004 | Las reglas de pago son reglas del sistema, no procesos externos | Fundacional |
+| LEC-005 | Los datos originales del cliente son intocables | Fundacional |
+| LEC-006 | La eliminación de datos no puede ejecutarse con exportaciones pendientes | Fundacional |
+| LEC-007 | Supabase como plataforma central simplifica la operación inicial | Fundacional |
+| LEC-008 | El horizonte de pronóstico es propio de cada cliente | Fundacional |
+| LEC-009 | Los pedidos atípicos: clasificar antes de modelar | Fundacional |
+| LEC-010 | Los replace_all en paths pueden generar rutas dobles | Fundacional (técnica) |
+| LEC-011 | Los briefs deben revisarse contra principios.md y metodologia.md | Fundacional (clave para 015) |
+| LEC-012 | El orchestrator (B) es un gestor de estado puro, no coordina workers | Fundacional (patrón) |
+| LEC-013 | Las skills son carpetas con SKILL.md, no archivos sueltos | Fundacional |
+| LEC-014 | Un worker interactivo no puede spawnarse vía CLI (corre inline) | Fundacional (patrón) |
+| LEC-015 | Los workers que tocan sistemas externos necesitan fallback local | Fundacional |
+| LEC-016 | El ITO usa normalización para que las 3 dimensiones tengan peso real | H-010 (liga T-178) |
+| LEC-017 | El evaluador debe ser delgado y delegar el scoring a una skill | Fundacional (patrón) |
+| LEC-018 | Los knowledge base son append-only y requieren IDs globales | Fundacional |
+| LEC-019 | Los skills son la fuente autoritativa sobre los archivos plan/ | Fundacional |
+| LEC-020 | El deploy requiere dos carpetas fuente por harness: scripts/ y templates/ | Fundacional (infra) |
+| LEC-021 | Los templates de proyecto cliente deben adaptarse, no copiarse | Fundacional |
+| LEC-022 | El governor debe usar la misma env var que el deploy script | Fundacional (infra) |
+| LEC-023 | Los workflows referenciados en CLAUDE.md deben existir en el deploy | Fundacional |
+| LEC-024 | Archivos de stack en proyectos cliente crean deuda sin valor | Fundacional |
+| LEC-025 | Brecha de reanudación E10-B: caso ESCALATION post-interviewer | H-010 |
+| LEC-026 | Discovery no es un formulario — es una conversación | H-010 |
+| LEC-027 | Un stakeholder puede cubrir múltiples roles | H-010 |
+| LEC-028 | La síntesis puede derivar artefactos de compatibilidad downstream | H-010 |
+| LEC-029 | Las verificaciones de reanudación deben ser explícitas y ordenadas | Fundacional (patrón) |
+| LEC-030 | Al insertar un worker, el checkpoint del tramo se mueve al worker final | Fundacional (patrón) |
+| LEC-031 | Los workers interactivos largos necesitan guardado incremental | Fundacional (patrón) |
+| LEC-032 | El comando de emergencia complementa, no reemplaza, el guardado auto | H-010 |
+| LEC-033 | Las skills del deploy deben llevar el prefijo del harness | Fundacional (infra) |
+| LEC-034 | El CLAUDE.md cliente debe usar patrones genéricos, no bloques por harness | Fundacional |
+| LEC-035 | El Sprint Contract debe ser autocontenido (entradas/salidas/checkpoints) | Fundacional (patrón) |
+| LEC-036 | La prueba de humo revela gaps de comportamiento no vistos en código | Fundacional (metodología) |
+| LEC-037 | La suspensión en T-092 fue manual por tokens, no un bug | H-010 |
+| LEC-038 | El orchestrator debe inicializarse con la cadena de workers actual | H-010 |
+| LEC-039 | Las rutas de archivo en los agentes solo se validan en ejecución real | Fundacional (metodología) |
+| LEC-040 | El Sprint Contract no debe pedir datos inexistentes en la etapa | Fundacional |
+| LEC-041 | Los commands deben deployarse al proyecto cliente, no solo global | Fundacional (infra) |
+| LEC-042 | El analyst no genera su tenant_id — lo lee de harness-state.json | Fundacional (liga DEC-047) |
+| LEC-043 | El interviewer debe cerrar el estado del último stakeholder | H-010 |
+| LEC-044 | El configurator preserva la riqueza semántica, no la resume | Fundacional (liga T-179) |
+| LEC-045 | El configurator debe conocer la ruta canónica del evento | H-010 |
+| LEC-046 | Una tarea "implementada" no garantiza el comportamiento en runtime | Fundacional (metodología) |
+| LEC-047 | El governor pre-registra escalamientos antes de invocar al evaluador | H-010 |
+| LEC-048 | Agents y skills globales contaminan sesiones no-FARO | Fundacional (infra) |
+| LEC-049 | La instalación a nivel de proyecto es el modelo correcto | Fundacional |
+| LEC-050 | `FARO_HOME` en settings.local.json permite a los comandos hallar el repo | Fundacional (infra) |
+| LEC-051 | El governor debe crear todas las carpetas del runtime | Fundacional (patrón) |
+| LEC-052 | Las guías de preguntas del interviewer deben vivir en el proyecto | H-010 |
+| LEC-053 | Las respuestas del operador van en la terminal donde corre el agente | Fundacional (metodología de prueba) |
+| LEC-054 | "PARAR COMPLETAMENTE — no escribir texto" paraliza al agente | Fundacional (prompts) |
+| LEC-055 | El lenguaje condicional suave vuelve opcional un paso obligatorio | Fundacional (prompts) |
+| LEC-056 | Separar el turno de setup del de entrevista fuerza la creación de archivos | Fundacional (prompts) |
+| LEC-057 | Un agente no debe cargar una skill que describe el artefacto de otro | Fundacional |
+| LEC-058 | execution-state.json no registra la completitud del interviewer | H-010 |
+| LEC-059 | El governor no debe lanzar workers como `claude --print` en background | Fundacional (conductor) |
+| LEC-060 | Validar e2e destapa regresiones que el flujo anterior enmascaraba | Fundacional (metodología) |
+| LEC-061 | Un governor sin estado registra eventos duplicados al re-derivar | Fundacional (patrón) |
+| LEC-062 | Al corregir un campo transversal, auditar TODOS sus escritores | Fundacional (metodología) |
+| LEC-063 | En Windows la allowlist debe cubrir PowerShell, no solo Bash | Fundacional (infra) |
+| LEC-064 | La allowlist no silencia las heurísticas de seguridad; bypass por proyecto | Fundacional (infra) |
+| LEC-065 | Un APPROVED no audita la calibración ni la riqueza semántica | Fundacional (metodología) |
+| LEC-066 | Los timestamps redactados por el agente no son reloj de ejecución | Fundacional (liga T-180) |
+
+---
+
 ## LEC-001 — El modelo de negocio define la arquitectura, no al revés
 **Contexto:** Al inicio se asumió un modelo SaaS con multi-tenancy autoservicio. El usuario corrigió: el modelo es Service as a Software donde Triple S opera todo.
 **Lección:** Antes de proponer cualquier componente técnico, confirmar el modelo de negocio. En este proyecto el cliente no opera el sistema — solo consume resultados. Esto elimina portales de configuración, APIs públicas y autoservicio del cliente.

@@ -5,6 +5,71 @@ Leer antes de proponer nuevas arquitecturas o enfoques.
 
 ---
 
+## Índice (catálogo)
+
+> Escanea esta tabla y abre solo la entrada que necesites (busca `## DEC-NNN`). **Alcance:** `Fundacional` = transversal al producto / aplica a todos los harnesses; `H-010` = mecánica específica del harness 010 Discovery. Las entradas no están en orden numérico estricto en el cuerpo — usa el buscador.
+
+| ID | Título | Alcance |
+|---|---|---|
+| DEC-001 | Modelo de negocio: Service as a Software | Fundacional |
+| DEC-002 | Categorías de precio y planes de pago | Fundacional |
+| DEC-003 | Regla de renovación de fecha por pago tardío | Fundacional |
+| DEC-004 | Mes 1 de onboarding gratuito | Fundacional |
+| DEC-005 | Arquitectura medallón de datos (Bronce / Plata / Oro) | Fundacional |
+| DEC-006 | Precio variable por complejidad de datos | Fundacional |
+| DEC-007 | Canales de entrega de resultados | Fundacional |
+| DEC-008 | Objetivo de salud de datos: 95% | Fundacional |
+| DEC-009 | SLAs de precisión vinculados a salud de datos | Fundacional |
+| DEC-010 | Retención y exportación de datos al cancelar | Fundacional |
+| DEC-011 | Unidad mínima de análisis: cliente × producto | Fundacional |
+| DEC-012 | Modos de ingesta de datos: Batch e Incremental | Fundacional (clave para 015) |
+| DEC-013 | Historial mínimo y estrategia cold start | Fundacional |
+| DEC-014 | Esquema de datos: dos tablas complementarias | Fundacional (clave para 015) |
+| DEC-015 | Índice de Salud de Datos (ISD): 6 dimensiones ponderadas | Fundacional |
+| DEC-016 | Escala de complejidad de datos y cargo adicional | Fundacional |
+| DEC-017 | Maestro de datos: construido y mantenido por Triple S | Fundacional |
+| DEC-018 | Alcance del pronóstico: horizonte, granularidad y geografía | Fundacional |
+| DEC-019 | Patrones de pedido: estacionalidad, señales, mínimos y atípicos | Fundacional |
+| DEC-020 | Stack tecnológico: tres fases progresivas | Fundacional |
+| DEC-021 | Latencia, seguridad y aislamiento de datos | Fundacional |
+| DEC-022 | Roles de usuario del dashboard y nivel de explicabilidad | Fundacional |
+| DEC-023 | KPIs internos de Triple S | Fundacional |
+| DEC-024 | Arquitectura de harnesses operacionales del producto | Fundacional |
+| DEC-025 | Simulaciones y escenarios what-if: Opción C (escenarios predefinidos) | Fundacional (060) |
+| DEC-026 | Orden de construcción de los harnesses operacionales | Fundacional |
+| DEC-027 | Convención de nombres para archivos de brief | Fundacional |
+| DEC-028 | Estructura de carpetas numeradas dentro de cada harness | Fundacional |
+| DEC-029 | Nombre del sistema: FARO | Fundacional |
+| DEC-030 | Arquitectura de agentes del 010: governor spawna workers vía CLI | H-010 — **OBSOLETA, reemplazada por DEC-051** |
+| DEC-031 | Skills como directorios con SKILL.md (schemas de referencia) | Fundacional |
+| DEC-032 | Estructura de carpetas fuente para scripts y templates de harness | Fundacional |
+| DEC-033 | Archivos workflows como guías de navegación livianas | Fundacional |
+| DEC-034 | default_stacks.md descartado (el stack vive en los agentes) | H-010 |
+| DEC-035 | Rediseño del discovery-interviewer: entrevista directa a stakeholders | H-010 |
+| DEC-036 | Nuevo agente: discovery-synthesizer | H-010 |
+| DEC-037 | Carpeta 800_inputs/ para artefactos de entrada humana | Fundacional |
+| DEC-038 | Guardado incremental por bloque en interviewer + /faro-save | H-010 |
+| DEC-039 | Skills del synthesizer renombradas a prefijo discovery-* | H-010 |
+| DEC-056 | Estrategia de prueba automatizada del harness 010 Discovery | H-010 *(antes DEC-039 duplicado)* |
+| DEC-040 | Estrategia de validación del harness 010 en tres fases | H-010 |
+| DEC-041 | Sprint Contract persiste en 700_contract/sc_010_discovery.md | Fundacional (patrón) |
+| DEC-042 | Subcarpetas dentro de 010_discovery/: deliverables/ y support/ | H-010 |
+| DEC-043 | `pending_email.json` vive en 600_persistence/ | H-010 |
+| DEC-044 | Convención de nombres para carpetas de datos y salidas | Fundacional |
+| DEC-045 | Interviewer presenta todas las preguntas del bloque de una vez | H-010 |
+| DEC-046 | Deploy en modo dev: junctions en lugar de copias | Fundacional (infra) |
+| DEC-047 | El governor genera el tenant_id; los workers lo leen de harness-state | Fundacional (patrón) |
+| DEC-048 | Instalación a nivel de proyecto | Fundacional (infra) |
+| DEC-049 | El interviewer arranca con un turno de setup antes de preguntar | H-010 |
+| DEC-050 | Marcador no-checkpoint del tramo interactivo + governor_mode vivo | Fundacional (capa de estado) |
+| DEC-051 | Modelo conductor: la sesión principal es el único spawner de agentes | Fundacional (patrón crítico) |
+| DEC-052 | responsable_pagos: pregunta dirigida del interviewer | H-010 |
+| DEC-053 | Allowlist de permisos cubre la herramienta PowerShell (Opción A) | Fundacional (infra) |
+| DEC-054 | Permisos por proyecto: bypassPermissions en el template de settings | Fundacional (infra) |
+| DEC-055 | Cerrado el 010; sigue el 015, con persistencia Capa 1 acoplada | Fundacional (rumbo) |
+
+---
+
 ## DEC-001 — Modelo de negocio: Service as a Software
 **Fecha:** 2026-06-08
 **Decisión:** El modelo de negocio es Service as a Software, no SaaS. Triple S opera el sistema de punta a punta. El cliente no toca el software — solo recibe resultados.
@@ -375,7 +440,8 @@ El `deploy-harness.ps1` copia automáticamente ambas carpetas al proyecto client
 
 ---
 
-## DEC-039 — Estrategia de prueba automatizada del harness 010 Discovery
+## DEC-056 — Estrategia de prueba automatizada del harness 010 Discovery
+> *(Originalmente registrada como un segundo "DEC-039" duplicado; renumerada a DEC-056 en sesión 37 para resolver la colisión de ID. Sin referencias externas que actualizar.)*
 **Fecha:** 2026-06-09
 **Decisión:** La prueba automatizada del harness 010 simula los entregables del interviewer mediante fixtures JSON predefinidos (`session_notes.json` + `stakeholder_map.json` con datos de Alimentos Prueba S.A.) y ejecuta el resto del pipeline de forma completamente automática. Los gates CP-03 y CP-04 que requieren decisión humana se mantienen — el operador los revisa y aprueba como en producción real.
 **Razón:** El interviewer es interactivo por diseño y no puede automatizarse sin cambiar su naturaleza. Los fixtures replican fielmente su salida para que synthesizer, analyst, configurator y evaluator corran sin modificaciones. Mantener CP-03 y CP-04 manuales permite verificar que los borradores generados son coherentes con los datos de prueba.
