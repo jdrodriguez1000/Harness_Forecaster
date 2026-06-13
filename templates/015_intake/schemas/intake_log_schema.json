@@ -1,0 +1,20 @@
+{
+  "_description": "Fila intake_log — una por entrega. En Fase 3 es una fila de la tabla Supabase intake_log; en Fase 1 es un JSON local con _pendiente_supabase: true. El _manifest.json es la fuente autoritativa; esta fila la indexa para consulta. Ver intake-log-schema.",
+  "_schema_version": 1,
+  "_pendiente_supabase": true,
+  "tenant_id": "",
+  "delivery_id": "",
+  "mode": "batch | incremental",
+  "created_at": "",
+  "files": [
+    {
+      "path": "",
+      "esquema": 1,
+      "sha256": "",
+      "rows": 0,
+      "date_range": { "min": "", "max": "" }
+    }
+  ],
+  "report_path": "",
+  "event_emitted": false
+}

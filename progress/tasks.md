@@ -11,7 +11,31 @@ Estados posibles: `no iniciada` | `en ejecución` | `implementada`
 | ID | Tarea | Estado |
 |---|---|---|
 | **T-060** | **Crear `brief/015_intake.md` — Plan de Construcción del harness 015 Intake.** 7 secciones siguiendo el patrón de `brief/010_discovery.md`. Precedido por una sesión de entendimiento (Fase 0 + E11) que cerró 10 decisiones de diseño (ver **DEC-057**): formatos, fuente agnóstica + costura de adaptador, peso agéntico (A/B/C con workers livianos + TDD real), worker único, esquemas independientes, inmutabilidad write-once+SHA-256, incremental = archivo/entrega + manifest, Excel con memoria, persistencia (rebanada del intake, sin cobro), handoff atómico a 020‖025. Brief redactado y persistido. | `implementada` |
-| **T-070** | **Construir el harness 015 Intake** según `brief/015_intake.md`: agentes `intake-governor`, `intake-orchestrator`, `intake-processor`, `intake-evaluator`; skills/schemas (`intake-report-schema`, `intake-manifest-schema`, `intake-log-schema`, `intake-rubric`, `intake-state-schema`); módulos de código del pipeline P1→P8 con TDD real + ~20 fixtures (E9). Acopla la rebanada de persistencia del intake (`intake_log` + Storage Bronce + evento) con fallback JSON Fase 1. Ver DEC-057. | `no iniciada` |
+| **T-183** | **Crear `plan/015_intake.md` — Plan de Trabajo de construcción del harness 015 Intake.** Plan paso a paso siguiendo el patrón de `plan/010_discovery.md`, derivado de `brief/015_intake.md`. Adapta el formato a un pipeline determinístico con **TDD real**: introduce pytest + estructura de tests + ~20 fixtures (E9), un paso por módulo de código (RED→GREEN), agentes A/B/C+Worker, schemas/skills, conocimiento, early-eval y smoke test e2e. **16 pasos en `plan/015_intake.md`.** | `implementada` |
+| **T-070** | **Construir el harness 015 Intake** según `brief/015_intake.md` y `plan/015_intake.md`: agentes `intake-governor`, `intake-orchestrator`, `intake-processor`, `intake-evaluator`; skills/schemas (`intake-report-schema`, `intake-manifest-schema`, `intake-log-schema`, `intake-rubric`, `intake-state-schema`); módulos de código del pipeline P1→P8 con TDD real + ~20 fixtures (E9). Acopla la rebanada de persistencia del intake (`intake_log` + Storage Bronce + evento) con fallback JSON Fase 1. Ver DEC-057. **Desglose por PASO abajo.** | `en ejecución` |
+
+### Construcción del 015 — desglose por PASO (T-070)
+
+Sigue `plan/015_intake.md`. Esta tabla es el estado autoritativo de avance de la construcción.
+
+| PASO | Qué | Entregable (repo fuente) | Estado |
+|---|---|---|---|
+| 1 | Andamiaje de carpetas | `scripts/015_intake/{pipeline,tests/fixtures}/` + `templates/015_intake/schemas/` (README + `__init__.py`); entorno verificado (`xlrd` instalado) | `implementada` |
+| 2 | Archivos de estado | **Absorbido en PASO 3e** — son runtime (los crea E10-A); estructura en `intake-state-schema` | `implementada` |
+| 3 | Schemas + skills (contratos) | 3 JSON en `templates/015_intake/schemas/` + 5 skills `.claude/skills/intake-*` | `implementada` |
+| 4 | `source_adapter.py` (P1 recepción) + test | `scripts/015_intake/pipeline/source_adapter.py` + `tests/test_source_adapter.py` | `no iniciada` ⬅ **SIGUIENTE** |
+| 5 | `format_detector.py` (P1 CSV delim/encoding, Excel hoja/cabecera) + test | `pipeline/format_detector.py` + test (canario acentos cp1252) | `no iniciada` |
+| 6 | `schema_validator.py` (P2 GATE, veto D2) + test | `pipeline/schema_validator.py` + test | `no iniciada` |
+| 7 | `type_validator.py` (P3) + `range_evaluator.py` (P5) + tests | `pipeline/{type_validator,range_evaluator}.py` + tests | `no iniciada` |
+| 8 | `deduplicator.py` (P4 batch/incremental) + test | `pipeline/deduplicator.py` + test | `no iniciada` |
+| 9 | `bronze_writer.py` (P6 write-once + SHA-256 + manifest, veto D5) + test | `pipeline/bronze_writer.py` + test | `no iniciada` |
+| 10 | `report_builder.py` (P7 intake_report + intake_log) + test | `pipeline/report_builder.py` + test | `no iniciada` |
+| 11 | `pipeline.py` (orquestación P1→P8 + P8 evento) + test integración | `pipeline/pipeline.py` + `tests/test_pipeline.py` | `no iniciada` |
+| 12 | ~20 fixtures (E9) con expectativas | `scripts/015_intake/tests/fixtures/` + README | `no iniciada` |
+| 13 | Agentes A/B/C+Worker | `.claude/agents/intake-{governor,orchestrator,processor,evaluator}.md` | `no iniciada` |
+| 14 | Conocimiento inicial | `610_knowledge/{decisions_library,lessons_learned}.md` (runtime — plantillar o crear en corrida) | `no iniciada` |
+| 15 | Early-eval (E9, gate ≥ 0.7) | registro en `execution-state.json.early_eval` (runtime) | `no iniciada` |
+| 16 | Smoke test / corrida e2e | en `Test_Forecaster/Test_NNN/` (terminal de prueba) | `no iniciada` |
 
 ---
 
@@ -84,5 +108,5 @@ Detectados en las corridas e2e. Ninguno impide avanzar al 015 (Test_006 dio APPR
 
 - Cada tarea es lo más atómica posible — una sola responsabilidad.
 - Al iniciar una tarea: cambiar estado a `en ejecución`. Al completarla: `implementada`.
-- Nuevas tareas se agregan con ID correlativo (el último usado es **T-182**; T-070 es el siguiente bloque de construcción del 015).
+- Nuevas tareas se agregan con ID correlativo (el último usado es **T-183**; T-070 es el siguiente bloque de construcción del 015).
 - El detalle histórico de cualquier tarea ya implementada del 010 está en `progress/history/tasks_harness010.md`.

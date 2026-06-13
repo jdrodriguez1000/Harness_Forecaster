@@ -77,6 +77,7 @@ Cada lección incluye el contexto en que surgió y cómo aplicarla.
 | LEC-064 | La allowlist no silencia las heurísticas de seguridad; bypass por proyecto | Fundacional (infra) |
 | LEC-065 | Un APPROVED no audita la calibración ni la riqueza semántica | Fundacional (metodología) |
 | LEC-066 | Los timestamps redactados por el agente no son reloj de ejecución | Fundacional (liga T-180) |
+| LEC-067 | El plan heredado mezcla carpetas runtime con artefactos del repo fuente | Fundacional (construcción de harnesses) |
 
 ---
 
@@ -537,6 +538,13 @@ Cada lección incluye el contexto en que surgió y cómo aplicarla.
 **Contexto:** En Test_006, `session_notes.json` registra la entrevista de Renata con `fecha_sesion`/`fecha_ultima_actualizacion` 19:25–19:40, pero el `discovery-synthesizer` ya había corrido a las 19:04:57 (con `interviewer_completed_at = 19:03:41` en `execution-state.json`). Es decir, el contenido afirma que una entrevista ocurrió *después* de que la síntesis que la consume ya se había producido. Los sellos de tiempo dentro de `session_notes.json` son narrados por el agente, no tomados del reloj real en el momento del Write.
 **Lección:** Hay dos clases de timestamp en el harness: los **operativos** (escritos por la capa de estado con `Get-Date -AsUTC` real: `claude-progress.txt`, `execution-state.json`, `harness-state.json`) y los **de contenido** (que un worker redacta dentro de un artefacto de dominio). Los segundos son ilustrativos y pueden contradecir el orden real del pipeline. No usarlos para ordenar, conciliar ni auditar por tiempo — la fuente de verdad temporal es la capa operativa.
 **Cómo aplicar:** Si un campo de timestamp dentro de un artefacto debe ser fiable, hacer que el agente lo selle con `Get-Date -AsUTC` real en el momento del Write (no un valor inventado). Si solo es ilustrativo, documentarlo como tal en el schema. Verificación de soporte: nunca asumir que `fecha_*` dentro de `session_notes.json`/`synthesis_report.json` refleja el reloj real de ejecución. Ver T-180.
+
+---
+
+## LEC-067 — El plan de construcción heredado mezcla carpetas runtime con artefactos del repo fuente (sesión 39)
+**Contexto:** Al iniciar el PASO 1 de `plan/015_intake.md` (construir el 015), el plan listaba crear `015_intake/`, `600_persistence/`, `605_eval/`, `610_knowledge/`, `615_changes/`. Esa lista se había copiado literalmente de `plan/010_discovery.md`, que fue escrito **antes** de que se estableciera la arquitectura de dos terminales (LEC-053). En la práctica, el 010 en el repo fuente **no** tiene esas carpetas: su código vive en `scripts/010_discovery/`, sus plantillas/schemas en `templates/010_discovery/`, y sus agentes/skills en `.claude/`. Las carpetas `6XX_*` son **estado runtime** que el ritual E10-A crea en la carpeta de prueba (`Test_Forecaster/Test_NNN/`) durante la corrida, no en el repo fuente.
+**Lección:** Hay dos clases de carpeta en un harness: las de **construcción** (código, tests, plantillas, schemas, agentes, skills → viven en el repo fuente, bajo `scripts/`, `templates/`, `.claude/`) y las de **estado runtime** (`600_persistence/`, `605_eval/`, `610_knowledge/`, `615_changes/`, el working dir `0NN_*/` → las crea E10-A en la terminal de prueba). Un plan de construcción solo debe materializar las primeras; las segundas se documentan (su estructura inicial vive en la skill `*-state-schema`), no se crean en el repo fuente. El PASO 2 (archivos de estado vacíos) por la misma razón se **absorbe** en la skill de estado, no produce archivos en el repo fuente.
+**Cómo aplicar:** Al construir cualquier harness siguiente (020, 025, …), tratar su `plan/0NN_*.md` PASO 1 como "andamiaje de construcción en el repo fuente" (`scripts/0NN_*/`, `templates/0NN_*/`, `.claude/`) y NO crear carpetas runtime. Documentar las estructuras iniciales de estado en la skill `0NN-state-schema`. Se corrigió `plan/015_intake.md` (PASO 1, PASO 2, mapa de módulos) en consecuencia. Ver LEC-053 (dos terminales), DEC-051 (modelo conductor) y T-070.
 
 ---
 

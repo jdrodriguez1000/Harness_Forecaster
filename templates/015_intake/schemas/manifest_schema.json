@@ -1,0 +1,17 @@
+{
+  "_description": "_manifest.json — registro autoritativo de entregas Bronce. Fuente única de verdad del histórico (unión lógica de los archivos inmutables). Vive junto al Bronce en 005_bronze/. Cada entrega exitosa AÑADE una entrada; nunca se reescriben entradas previas. Ver intake-manifest-schema.",
+  "_schema_version": 1,
+  "tenant_id": "",
+  "entregas": [
+    {
+      "delivery_id": "YYYYMMDD",
+      "mode": "batch | incremental",
+      "timestamp": "",
+      "archivo": "orders_batch_YYYYMMDD.csv",
+      "esquema": 1,
+      "sha256": "",
+      "rows": 0,
+      "rango": { "fecha_min": "", "fecha_max": "" }
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "_description": "Output P7 del intake-processor — reporte cuantificado de la entrega. Primer documento de la cadena de evidencia del ISD que leerá el 020. Escrito una sola vez por entrega; no se reescribe (salvo rework de reportes con Bronce intacto). Ver intake-report-schema.",
+  "_schema_version": 1,
+  "tenant_id": "",
+  "delivery_id": "",
+  "mode": "batch | incremental",
+  "timestamp": "",
+  "format": {
+    "tipo": "csv | xlsx | xls",
+    "delimitador": null,
+    "encoding": "",
+    "hoja": null,
+    "fila_cabecera": null,
+    "huella_reutilizada": false
+  },
+  "schema1": {
+    "rows": 0,
+    "campos_minimos_presentes": [],
+    "campos_minimos_faltantes": [],
+    "campos_ideales_presentes": [],
+    "campos_ideales_faltantes": [],
+    "errores_tipo": {
+      "fecha_pedido": 0,
+      "id_cliente": 0,
+      "id_producto": 0,
+      "cantidad_solicitada": 0
+    },
+    "duplicados": {
+      "internos": 0,
+      "vs_bronce_previo": 0
+    },
+    "rango_temporal": {
+      "fecha_min": "",
+      "fecha_max": "",
+      "dias_cubiertos": 0
+    }
+  },
+  "schema2": {
+    "status": "CREATED | NOT_EXPECTED | EXPECTED_NOT_RECEIVED",
+    "rows": 0,
+    "campos_minimos_faltantes": [],
+    "errores_tipo": {}
+  },
+  "rango_declarado_vs_real": {
+    "declarado_anios": null,
+    "real_anios": null,
+    "discrepancia_pct": null,
+    "warning": false
+  },
+  "warnings": []
+}
